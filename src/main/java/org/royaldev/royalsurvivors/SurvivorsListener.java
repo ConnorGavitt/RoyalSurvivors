@@ -400,10 +400,12 @@ public class SurvivorsListener implements Listener {
 
     @EventHandler
     public void onRefillBattery(CraftItemEvent e) {
-        if (!e.getRecipe().equals(plugin.batteryRefill)) return;
         if (!(e.getWhoClicked() instanceof Player)) return;
         Player p = (Player) e.getWhoClicked();
         if (!(isInInfectedWorld(p))) return;
+        if (!(e.getRecipe() instanceof ShapelessRecipe)) return;
+        ShapelessRecipe slr = (ShapelessRecipe) e.getRecipe();
+        if (!shapelessRecipesMatch(slr, plugin.batteryRefill)) return;
         plugin.getUserdata(p).setInteger(100, "radio.battery");
     }
 
