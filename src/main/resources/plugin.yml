@@ -1,0 +1,31 @@
+name: RoyalSurvivors
+version: ${project.version}
+main: org.royaldev.royalsurvivors.RoyalSurvivors
+author: jkcclemens
+
+commands:
+  radio:
+    description: Uses the radio.
+    aliases: [call]
+    usage: /<command> [channel]
+  gps:
+    description: Manages GPS.
+    usage: /<command> [player/location/here/base/zombie] (name/x y z)
+  survivors:
+    description: Manages RoyalSurvivors.
+    aliases: [rs, royalsurvivors]
+    usage: /<command> [subcommand]
+
+permissions:
+  rsurv.allowcommands:
+    description: Allows use of any command in the infected world.
+    default: op
+  rsurv.radio:
+    description: Allows use of the /radio command.
+    default: op
+  rsurv.survivors:
+    description: Allows use of the /survivors command.
+    default: op
+  rsurv.gps:
+    description: Allows use of the /gps command.
+    default: op

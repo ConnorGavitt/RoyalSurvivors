@@ -1,0 +1,19 @@
+= RoyalSurvivors
+
+RoyalSurvivors is a hardcore, fast-paced, zombie-based survival plugin. Features:
+
+ * Players must manage health, hunger, and thirst.
+ * A radio must be used to be heard by people further than 15 (configurable) blocks away. The radio can be configured to use a battery, as well.
+ * A GPS can be crafted to point players in the direction they set. GPS can hold a spot marked as home that can be pointed to, as well as point to other players (they must first link both of their GPSs).
+ * Animals spawn only during night. During the day, zombies have a 4/5 chance to spawn where an animal would.
+ * Zombies do five times their normal damage.
+ * Bows do four times their normal damage.
+ * Zombies come in different levels (1 - 7). Each level has a higher amount of HP (up to 80 whole hearts) and a different amount of armor (random - not all zombies will have armor).
+ * Players can be banned (permanently or for an amount of time) on death via the config.
+ * Players can have their items stored in a chest on death.
+ * Bows & arrows have different recipes to match the recommended texture pack.
+ * Create a health pack that restores four whole hearts with two cactus greens and a paper.
+ * XP is completely disabled. Once the Anvil API is released, repairing and enchanting (a different enchantment system will be used) will not require XP.
+ * A zombie can be configured to spawn when a player dies.
+ * Only RoyalSurvivors commands can be used in the zombie world unless a special permission is granted. Prevent cheating!
+ * Zombies won't burn in daylight, and they may be given potion effects (configurable).

@@ -1,0 +1,74 @@
+# Options that directly affect gameplay
+gameplay:
+  # Options that affect the way zombies work
+  zombies:
+    # Ocean zombies spawn where squid should spawn. This makes it harder for survivors in the ocean to live.
+    enable_ocean_zombies: false
+    # Options regarding potion effects on zombies
+    potions:
+      # Use potion effects on zombies? Some are positive effects, and others are negative.
+      enabled: true
+      # 1/chance_out_of = percent chance of adding potion effects to a zombie
+      chance_out_of: 250
+      # Levels are 1 - 7
+      minimum_level: 5
+    # Options regarding hordes of zombies (many spawned at once)
+    hordes:
+      # 1/chance_out_of = percent chance of horde spawn
+      # Minimum 2, maximum is Java's integer cap
+      chance_out_of: 100
+      # Least amount of zombies in any horde
+      low: 10
+      # Highest amount of zombies in any horde
+      high: 40
+  # Options regarding use of the radio
+  radio:
+    # What item to use for the radio. Compass is recommended, as it will combine the GPS & Radio function.
+    item: COMPASS
+    # Options regarding the radio's battery
+    battery:
+      # Use a battery on the radio? If the battery hits 0, the radio dies (same as having radio off).
+      use: false
+      # What item should recharge the battery in a crafting bench?
+      item: GLOWSTONE_DUST
+      # Options regarding how fast the battery drains
+      drain:
+        # Percent to drain
+        amount: 5
+        # Drain amount every interval minutes
+        interval: 10
+    # Radius for chat to go if radio is off
+    local_chat_radius: 15
+  # World to enable RoyalSurvivors in
+  world_to_use: zombies
+  # Maximum mobs allowed to spawn (< 0 is disable)
+  max_mobs_allowed: 1536
+  # Spawn if the max amount of mobs is reached? This will remove the first zombie it finds to make room for the new one
+  # if it is set to true. If it is false, no more zombies will spawn until one naturally despawns or is killed.
+  spawn_if_maxed: false
+  # Options regarding player deaths
+  death:
+    # Options regarding bans on player deaths
+    ban:
+      # Enable ban on player death
+      enabled: true
+      # Lenght of the ban in minutes. < 0 is permanent
+      length: 180
+      # Message to show the banned player. (supports color codes)
+      message: "You died."
+    # Put the player's drops into a chest where they were? (will have chests all over the place)
+    drops_to_chest: true
+    # Spawn a zombie where the player died?
+    spawn_zombie: true
+
+# Miscellaneous options
+miscellaneous:
+  # Prints a whole bunch of interesting dev information to console
+  debug: false
+
+# Userdata saving options
+saving:
+  # Should userdata be saved whenever it is changed? This may slow down performance if true, but it will make sure all
+  # changes persist, even after crashes. If this is false, all userdata will be saved on server shutdown/plugin disable.
+  # Should the server crash, no data will be saved. (userdata contains GPS data, thirst, radio data, etc.)
+  save_on_change: true
