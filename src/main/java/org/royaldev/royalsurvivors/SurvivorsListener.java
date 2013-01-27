@@ -58,6 +58,28 @@ public class SurvivorsListener implements Listener {
     }
 
     /**
+     * Checks to see if the ingredients of the recipes are the same.
+     *
+     * @param a Recipe A
+     * @param b Recipe B
+     * @return If A & B have the same ingredients
+     */
+    private boolean shapelessRecipesMatch(ShapelessRecipe a, ShapelessRecipe b) {
+        return a.getIngredientList().containsAll(b.getIngredientList());
+    }
+
+    /**
+     * Checks to see if the ingredients (<strong>not order</strong>) of the recipes are the same.
+     *
+     * @param a Recipe A
+     * @param b Recipe B
+     * @return If A & B have the same ingredients
+     */
+    private boolean shapedRecipesMatch(ShapedRecipe a, ShapedRecipe b) {
+        return a.getIngredientMap().values().containsAll(b.getIngredientMap().values());
+    }
+
+    /**
      * Sanitizes a message for use in vanilla chat.
      *
      * @param format Format of message to sanitize
@@ -409,11 +431,8 @@ public class SurvivorsListener implements Listener {
         ItemStack result = rr.getResult();
         if (rr instanceof ShapedRecipe) {
             ShapedRecipe srr = (ShapedRecipe) rr;
-            if (result.getType() == Material.BOW && srr.getIngredientMap().equals(plugin.bowRecipe.getIngredientMap()))
-                e.setCancelled(true);
-        } else if (rr instanceof ShapelessRecipe) {
-            ShapelessRecipe slrr = (ShapelessRecipe) rr;
-            if (result.getType() == Material.ARROW && slrr.getIngredientList().equals(plugin.arrowRecipe.getIngredientList()))
+            if (result.getType() == Material.BOW && !shapedRecipesMatch(srr, plugin.bowRecipe)) e.setCancelled(true);
+            if (result.getType() == Material.ARROW && !srr.getIngredientMap().values().containsAll(plugin.arrowRecipe.getIngredientList()))
                 e.setCancelled(true);
         }
         if (e.isCancelled()) e.setResult(Event.Result.DENY);
