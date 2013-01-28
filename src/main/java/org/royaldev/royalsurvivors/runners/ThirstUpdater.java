@@ -29,7 +29,7 @@ public class ThirstUpdater implements Runnable {
                 pcm.setFloat(f, "thirst");
                 continue;
             }
-            f -= .05F;
+            f -= Config.thirstPercent / 100F;
             p.setExp(f);
             pcm.setFloat(f, "thirst");
             if (f <= 0F) {

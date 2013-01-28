@@ -48,11 +48,16 @@ public class Config {
         batteryDrainInterval = c.getInt("gameplay.radio.battery.drain.interval");
         potionChance = c.getInt("gameplay.zombies.potions.chance_out_of");
         minLevelPotion = c.getInt("gameplay.zombies.potions.minimum_level");
+        thirstPercent = c.getInt("gameplay.thirst.drain.amount");
+        thirstInterval = c.getInt("gameplay.thirst.drain.interval");
+        thirstRestorePercent = c.getInt("gameplay.thirst.restore.amount");
 
         if (hordeChance < 2) hordeChance = 2;
         if (hordeMax < 0) hordeMax = 40;
         if (hordeMin < 0) hordeMin = 10;
         if (hordeMax < hordeMin) hordeMax = hordeMin;
+
+        if (potionChance < 2) potionChance = 2;
 
         try {
             radioMaterial = Material.valueOf(radioItem);
@@ -95,6 +100,9 @@ public class Config {
     public static int batteryDrainInterval;
     public static int potionChance;
     public static int minLevelPotion;
+    public static int thirstPercent;
+    public static int thirstInterval;
+    public static int thirstRestorePercent;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;

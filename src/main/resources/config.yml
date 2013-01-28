@@ -1,5 +1,17 @@
 # Options that directly affect gameplay
 gameplay:
+  # Options relating to thirst (cannot be disabled)
+  thirst:
+    # Options relating to thirst drain
+    drain:
+      # Amount of thirst to drain in % of XP bar
+      amount: 5
+      # How often to drain thirst in minutes
+      interval: 10
+    # Options relating to thirst restore
+    restore:
+      # How much thirst (in % of XP bar) to restore after drinking a water bottle
+      amount: 20
   # Options that affect the way zombies work
   zombies:
     # Ocean zombies spawn where squid should spawn. This makes it harder for survivors in the ocean to live.
@@ -9,9 +21,9 @@ gameplay:
       # Use potion effects on zombies? Some are positive effects, and others are negative.
       enabled: true
       # 1/chance_out_of = percent chance of adding potion effects to a zombie
-      chance_out_of: 250
+      chance_out_of: 5
       # Levels are 1 - 7
-      minimum_level: 5
+      minimum_level: 4
     # Options regarding hordes of zombies (many spawned at once)
     hordes:
       # 1/chance_out_of = percent chance of horde spawn
