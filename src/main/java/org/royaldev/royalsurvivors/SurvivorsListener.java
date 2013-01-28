@@ -222,6 +222,7 @@ public class SurvivorsListener implements Listener {
 
     @EventHandler
     public void phosphorousGrenades(ProjectileHitEvent e) {
+        if (!Config.useGrenades) return;
         Projectile p = e.getEntity();
         if (!(p instanceof Snowball)) return;
         Location hit = p.getLocation();
@@ -230,8 +231,8 @@ public class SurvivorsListener implements Listener {
         for (Entity ent : toFire) {
             if (!(ent instanceof LivingEntity)) continue;
             LivingEntity le = (LivingEntity) ent;
-            le.damage((int) Math.ceil(le.getMaxHealth() / 5D));
-            le.setFireTicks(200);
+            le.damage((int) Math.ceil(le.getMaxHealth() / nextInt(Config.grenadeHighDamage, Config.grenadeLowDamage)));
+            le.setFireTicks(nextInt(Config.grenadeLowBurn, Config.grenadeHighBurn) * 20);
         }
     }
 
@@ -528,7 +529,9 @@ public class SurvivorsListener implements Listener {
 
     @EventHandler
     public void destroyBlock(BlockBreakEvent e) {
-        if (e.getBlock().getType() != Material.SNOW) return;
+        if (!Config.useGrenades) return;
+        Material m = e.getBlock().getType();
+        if (m != Material.SNOW || m != Material.SNOW_BLOCK) return;
         e.setCancelled(true); // let's cancel so no drops
         e.getBlock().setType(Material.AIR); // still have it go away
     }

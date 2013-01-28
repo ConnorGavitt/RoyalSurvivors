@@ -57,6 +57,18 @@ gameplay:
         interval: 10
     # Radius for chat to go if radio is off
     local_chat_radius: 15
+  # Options pertaining to phosphorous grenades
+  grenades:
+    # Enable phosphorous grenades?
+    enabled: true
+    # How much damage the grenade should deal on explosion (high percentile) 1/high_damage of max health
+    high_damage: 3
+    # How much damage the grenade should deal on explosion (low percentile) 1/low_damage of max health
+    low_damage: 8
+    # How long an entity will burn in seconds (low)
+    low_burn_time: 8
+    # How long an entity will burn in seconds (high)
+    high_burn_time: 15
   # How often in seconds for the GPS to update its location. This affects player positions and compass resets.
   gps_update_interval: 5
   # World to enable RoyalSurvivors in

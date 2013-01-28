@@ -37,6 +37,7 @@ public class Config {
         debug = c.getBoolean("miscellaneous.debug");
         oceanZombies = c.getBoolean("gameplay.zombies.enable_ocean_zombies");
         useSpeed = c.getBoolean("gameplay.zombies.speed.enabled");
+        useGrenades = c.getBoolean("gameplay.grenades.enabled");
 
         localChatRadius = c.getLong("gameplay.radio.local_chat_radius");
 
@@ -54,6 +55,10 @@ public class Config {
         thirstRestorePercent = c.getInt("gameplay.thirst.restore.amount");
         speedBoostLevel = c.getInt("gameplay.zombies.speed.level");
         gpsUpdateInterval = c.getInt("gameplay.gps_update_interval");
+        grenadeHighDamage = c.getInt("gameplay.grenades.high_damage");
+        grenadeLowDamage = c.getInt("gameplay.grenades.low_damage");
+        grenadeHighBurn = c.getInt("gameplay.grenades.high_burn_time");
+        grenadeLowBurn = c.getInt("gameplay.grenades.low_burn_time");
 
         if (hordeChance < 2) hordeChance = 2;
         if (hordeMax < 0) hordeMax = 40;
@@ -63,6 +68,10 @@ public class Config {
         if (potionChance < 2) potionChance = 2;
 
         if (speedBoostLevel < 0) speedBoostLevel = 0;
+
+        if (grenadeLowDamage < 0) grenadeLowDamage = 8;
+        if (grenadeHighDamage < 0) grenadeHighDamage = 3;
+        if (grenadeLowDamage < grenadeHighDamage) grenadeLowDamage = grenadeHighDamage;
 
         try {
             radioMaterial = Material.valueOf(radioItem);
@@ -94,6 +103,7 @@ public class Config {
     public static boolean debug;
     public static boolean oceanZombies;
     public static boolean useSpeed;
+    public static boolean useGrenades;
 
     public static double localChatRadius;
 
@@ -111,6 +121,10 @@ public class Config {
     public static int thirstRestorePercent;
     public static int speedBoostLevel;
     public static int gpsUpdateInterval;
+    public static int grenadeHighDamage;
+    public static int grenadeLowDamage;
+    public static int grenadeLowBurn;
+    public static int grenadeHighBurn;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;
