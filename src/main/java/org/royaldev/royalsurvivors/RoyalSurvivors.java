@@ -85,7 +85,7 @@ public class RoyalSurvivors extends JavaPlugin {
         bowRecipe.setIngredient('G', Material.GLASS).setIngredient('W', Material.WOOD).setIngredient('I', Material.IRON_INGOT).setIngredient('L', Material.LEVER).setIngredient('P', Material.SULPHUR);
         getServer().addRecipe(bowRecipe);
         arrowRecipe = new ShapelessRecipe(new ItemStack(Material.ARROW, 8));
-        arrowRecipe.addIngredient(Material.IRON_INGOT).addIngredient(Material.IRON_INGOT);
+        arrowRecipe.addIngredient(2, Material.IRON_INGOT);
         getServer().addRecipe(arrowRecipe);
         ShapelessRecipe slr = new ShapelessRecipe(new ItemStack(Material.PORK, 1));
         slr.addIngredient(Material.ROTTEN_FLESH).addIngredient(Material.GOLD_NUGGET).addIngredient(Material.WATER_BUCKET);
@@ -108,6 +108,9 @@ public class RoyalSurvivors extends JavaPlugin {
         slr.addIngredient(Material.INK_SACK, 2);
         slr.addIngredient(Material.INK_SACK, 2);
         slr.addIngredient(Material.PAPER);
+        getServer().addRecipe(slr);
+        slr = new ShapelessRecipe(new ItemStack(Material.SNOW_BALL, 1));
+        slr.addIngredient(Material.SULPHUR).addIngredient(Material.EGG).addIngredient(Material.FLINT);
         getServer().addRecipe(slr);
     }
 
