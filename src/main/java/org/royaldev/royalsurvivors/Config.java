@@ -38,6 +38,8 @@ public class Config {
         oceanZombies = c.getBoolean("gameplay.zombies.enable_ocean_zombies");
         useSpeed = c.getBoolean("gameplay.zombies.speed.enabled");
         useGrenades = c.getBoolean("gameplay.grenades.enabled");
+        useBabies = c.getBoolean("gameplay.zombies.babies.enabled");
+        babiesAlwaysFast = c.getBoolean("gameplay.zombies.babies.always_fast");
 
         localChatRadius = c.getLong("gameplay.radio.local_chat_radius");
 
@@ -50,8 +52,13 @@ public class Config {
         batteryDrainInterval = c.getInt("gameplay.radio.battery.drain.interval");
         potionChance = c.getInt("gameplay.zombies.potions.chance_out_of");
         minLevelPotion = c.getInt("gameplay.zombies.potions.minimum_level");
-        thirstPercent = c.getInt("gameplay.thirst.drain.amount");
-        thirstInterval = c.getInt("gameplay.thirst.drain.interval");
+        thirstWalk = c.getInt("gameplay.thirst.drain.walk");
+        thirstSprint = c.getInt("gameplay.thirst.drain.sprint");
+        thirstSneak = c.getInt("gameplay.thirst.drain.sneak");
+        thirstJump = c.getInt("gameplay.thirst.drain.jump");
+        thirstFire = c.getInt("gameplay.thirst.drain.fire");
+        thirstMax = c.getInt("gameplay.thirst.drain.max");
+        thirstSaturationMax = c.getInt("gameplay.thirst.saturation.max");
         thirstRestorePercent = c.getInt("gameplay.thirst.restore.amount");
         speedBoostLevel = c.getInt("gameplay.zombies.speed.level");
         gpsUpdateInterval = c.getInt("gameplay.gps_update_interval");
@@ -59,6 +66,7 @@ public class Config {
         grenadeLowDamage = c.getInt("gameplay.grenades.low_damage");
         grenadeHighBurn = c.getInt("gameplay.grenades.high_burn_time");
         grenadeLowBurn = c.getInt("gameplay.grenades.low_burn_time");
+        babyZombieChance = c.getInt("gameplay.zombies.babies.chance_out_of");
 
         if (hordeChance < 2) hordeChance = 2;
         if (hordeMax < 0) hordeMax = 40;
@@ -66,6 +74,8 @@ public class Config {
         if (hordeMax < hordeMin) hordeMax = hordeMin;
 
         if (potionChance < 2) potionChance = 2;
+
+        if (babyZombieChance < 2) babyZombieChance = 2;
 
         if (speedBoostLevel < 0) speedBoostLevel = 0;
 
@@ -104,6 +114,8 @@ public class Config {
     public static boolean oceanZombies;
     public static boolean useSpeed;
     public static boolean useGrenades;
+    public static boolean useBabies;
+    public static boolean babiesAlwaysFast;
 
     public static double localChatRadius;
 
@@ -116,8 +128,13 @@ public class Config {
     public static int batteryDrainInterval;
     public static int potionChance;
     public static int minLevelPotion;
-    public static int thirstPercent;
-    public static int thirstInterval;
+    public static int thirstWalk;
+    public static int thirstSprint;
+    public static int thirstSneak;
+    public static int thirstJump;
+    public static int thirstFire;
+    public static int thirstMax;
+    public static int thirstSaturationMax;
     public static int thirstRestorePercent;
     public static int speedBoostLevel;
     public static int gpsUpdateInterval;
@@ -125,6 +142,7 @@ public class Config {
     public static int grenadeLowDamage;
     public static int grenadeLowBurn;
     public static int grenadeHighBurn;
+    public static int babyZombieChance;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;

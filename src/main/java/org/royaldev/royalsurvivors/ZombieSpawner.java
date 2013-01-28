@@ -207,15 +207,18 @@ public class ZombieSpawner {
         }
     }
 
-    public static void spawnLeveledZombie(Location l) {
-        spawnLeveledZombie(l, r.nextInt(8));
+    public static Zombie spawnLeveledZombie(Location l) {
+        return spawnLeveledZombie(l, r.nextInt(8));
     }
 
-    public static void spawnLeveledZombie(Location l, int level) {
-        if (level < 1) level = 1; // 1 is min level (max health 20)
-        if (level > 7) level = 7; // 7 is max level (max health 160)
-        Zombie z = spawnZombieBase(l);
-        if (z == null) return;
+    public static void applyZombieCharacteristics(Zombie z, int level) {
+        if (level < 1) level = 1;
+        if (level > 7) level = 7;
+        if (Config.useBabies && nextInt(1, Config.babyZombieChance) == Config.babyZombieChance - 1) {
+            if (Config.babiesAlwaysFast)
+                z.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 3));
+            z.setBaby(true);
+        }
         z.setMaxHealth(r.nextInt(20) + (nextInt(10, 20) * level));
         z.setHealth(z.getMaxHealth());
         setEntityEquipment(z.getEquipment(), level);
@@ -223,7 +226,16 @@ public class ZombieSpawner {
             if (nextInt(1, Config.potionChance) == Config.potionChance - 1) applyPotionEffects(z);
         if (Config.useSpeed)
             z.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, Config.speedBoostLevel));
+    }
+
+    public static Zombie spawnLeveledZombie(Location l, int level) {
+        if (level < 1) level = 1; // 1 is min level (max health 20)
+        if (level > 7) level = 7; // 7 is max level (max health 160)
+        Zombie z = spawnZombieBase(l);
+        if (z == null) return null;
+        applyZombieCharacteristics(z, level);
         RoyalSurvivors.debugStatic("zombie: (" + level + ", " + z.getMaxHealth() + ", " + z.getEquipment() + ", " + z.getLocation() + ")");
+        return z;
     }
 
 }

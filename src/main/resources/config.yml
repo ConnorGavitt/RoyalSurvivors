@@ -2,12 +2,27 @@
 gameplay:
   # Options relating to thirst (cannot be disabled)
   thirst:
+    # Options relating to saturation drain
+    saturation:
+      # Saturation is out of this number. When the player's saturation is at 0, then the actual thirst begins to drain.
+      # Saturation is calculated using the same method and drain amounts as drain is below. If a player drinks water,
+      # their saturation goes to max, so this should be a low number.
+      max: 250
     # Options relating to thirst drain
     drain:
-      # Amount of thirst to drain in % of XP bar
-      amount: 5
-      # How often to drain thirst in minutes
-      interval: 10
+      # Thirst is out of this number. The drain amounts are subtracted from this number, and then a percentage is made
+      # by dividing the amount of thirst leftover by the max.
+      max: 100000
+      # Amount of thirst to drain if walking
+      walk: 2
+      # Amount of thirst to drain if sprinting
+      sprint: 3
+      # Amount of thirst to drain if sneaking
+      sneak: 1
+      # Amount of thirst to drain in addition to other amounts if jumping
+      jump: 1
+      # Amount of thirst to drain if on fire
+      fire: 10
     # Options relating to thirst restore
     restore:
       # How much thirst (in % of XP bar) to restore after drinking a water bottle
@@ -16,6 +31,14 @@ gameplay:
   zombies:
     # Ocean zombies spawn where squid should spawn. This makes it harder for survivors in the ocean to live.
     enable_ocean_zombies: false
+    # Options regarding baby zombie spawns
+    babies:
+      # Spawn baby zombies?
+      enabled: true
+      # Should babies always be given a speed boost?
+      always_fast: true
+      # 1/chance_out_of = percent chance of spawning a baby zombie
+      chance_out_of: 50
     # Options regarding zombie speed
     speed:
       # Enable a speed boost for every zombie?

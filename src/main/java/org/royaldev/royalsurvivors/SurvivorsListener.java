@@ -40,7 +40,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
@@ -81,6 +83,14 @@ public class SurvivorsListener implements Listener {
      */
     private boolean shapedRecipesMatch(ShapedRecipe a, ShapedRecipe b) {
         return a.getIngredientMap().values().containsAll(b.getIngredientMap().values());
+    }
+
+    private boolean isOnLadder(Location l) {
+        return l.getBlock().getType() == Material.LADDER;
+    }
+
+    private boolean isOnLadder(Player p) {
+        return isOnLadder(p.getLocation());
     }
 
     /**
@@ -232,7 +242,7 @@ public class SurvivorsListener implements Listener {
             if (!(ent instanceof LivingEntity)) continue;
             LivingEntity le = (LivingEntity) ent;
             le.damage((int) Math.ceil(le.getMaxHealth() / nextInt(Config.grenadeHighDamage, Config.grenadeLowDamage)));
-            le.setFireTicks(nextInt(Config.grenadeLowBurn, Config.grenadeHighBurn) * 20);
+            le.setFireTicks(nextInt(Config.grenadeLowBurn, Config.grenadeHighBurn));
         }
     }
 
@@ -352,7 +362,16 @@ public class SurvivorsListener implements Listener {
         Player p = e.getEntity();
         if (!isInInfectedWorld(p)) return;
         if (!Config.spawnZombie) return;
-        ZombieSpawner.spawnLeveledZombie(p.getLocation());
+        Zombie z = ZombieSpawner.spawnLeveledZombie(p.getLocation());
+        if (z == null) return;
+        EntityEquipment ze = z.getEquipment();
+        EntityEquipment pe = p.getEquipment();
+        if (ze == null || pe == null) return;
+        ze.setArmorContents(pe.getArmorContents());
+        ze.setHelmetDropChance(0F);
+        ze.setChestplateDropChance(0F);
+        ze.setLeggingsDropChance(0F);
+        ze.setBootsDropChance(0F);
     }
 
     @EventHandler
@@ -391,7 +410,10 @@ public class SurvivorsListener implements Listener {
 
     @EventHandler
     public void zombieIsMasterRace(CreatureSpawnEvent e) {
-        if (e.getEntityType() == EntityType.ZOMBIE) return; // don't force spawn zombies when they're spawning already!
+        if (e.getEntityType() == EntityType.ZOMBIE) { // don't force spawn zombies when they're spawning already!
+            ZombieSpawner.applyZombieCharacteristics((Zombie) e.getEntity(), r.nextInt(8));
+            return;
+        }
         if (!isInInfectedWorld(e.getEntity())) return;
         World w = e.getLocation().getWorld();
         if (r.nextInt(Config.hordeChance) == Config.hordeChance - 1) {
@@ -556,13 +578,15 @@ public class SurvivorsListener implements Listener {
         if (hand.getType() != Material.POTION) return;
         if (hand.getDurability() != (short) 0) return;
         if (!isInInfectedWorld(p)) return;
-        if (!p.isSneaking()) return;
+        //if (!p.isSneaking()) return;
         PConfManager pcm = plugin.getUserdata(p);
         Float thirst = pcm.getFloat("thirst");
         if (thirst == null) thirst = 1F;
+        if (thirst >= 1F) return; // let's not waste water bottles
         thirst += Config.thirstRestorePercent / 100F;
         if (thirst > 1F) thirst = 1F;
         pcm.setFloat(thirst, "thirst");
+        pcm.setFloat((float) Config.thirstSaturationMax, "thirstSaturation");
         p.setExp(thirst);
         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
             @Override
@@ -577,6 +601,44 @@ public class SurvivorsListener implements Listener {
                 p.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE));
             }
         });
+    }
+
+    @EventHandler
+    public void oohYouTouchMyTaLaLa(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+        if (!isInInfectedWorld(p)) return;
+        Location from = e.getFrom();
+        Location to = e.getTo();
+        if (from.getX() == to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ()) return; // looking around
+        PConfManager pcm = plugin.getUserdata(p);
+        Float saturation = pcm.getFloat("thirstSaturation");
+        if (saturation == null) saturation = (float) Config.thirstSaturationMax;
+        if (saturation > 0F) {
+            if (p.isSprinting()) saturation -= Config.thirstSprint;
+            else if (p.isSneaking()) saturation -= Config.thirstSneak;
+            else saturation -= Config.thirstWalk;
+            if (from.getY() != to.getY() && !isOnLadder(p)) saturation -= Config.thirstJump;
+            pcm.setFloat(saturation, "thirstSaturation");
+            return;
+        }
+        Float thirst = pcm.getFloat("thirst");
+        if (thirst == null) thirst = 1F;
+        thirst *= Config.thirstMax;
+        if (p.isSprinting()) thirst -= Config.thirstSprint;
+        else if (p.isSneaking()) thirst -= Config.thirstSneak;
+        else thirst -= Config.thirstWalk;
+        // jump check (disregard ladders)
+        if (from.getY() != to.getY() && !isOnLadder(p)) thirst -= Config.thirstJump;
+        if (thirst <= 0F) {
+            p.sendMessage(ChatColor.BLUE + "You have died of dehydration.");
+            p.setHealth(0);
+            p.setExp(1F);
+            pcm.setFloat(1F, "thirst");
+            return;
+        }
+        thirst /= Config.thirstMax;
+        pcm.setFloat(thirst, "thirst");
+        p.setExp(thirst);
     }
 
 }
