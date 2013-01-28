@@ -53,6 +53,7 @@ public class Config {
         thirstInterval = c.getInt("gameplay.thirst.drain.interval");
         thirstRestorePercent = c.getInt("gameplay.thirst.restore.amount");
         speedBoostLevel = c.getInt("gameplay.zombies.speed.level");
+        gpsUpdateInterval = c.getInt("gameplay.gps_update_interval");
 
         if (hordeChance < 2) hordeChance = 2;
         if (hordeMax < 0) hordeMax = 40;
@@ -109,6 +110,7 @@ public class Config {
     public static int thirstInterval;
     public static int thirstRestorePercent;
     public static int speedBoostLevel;
+    public static int gpsUpdateInterval;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;

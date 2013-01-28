@@ -125,7 +125,7 @@ public class RoyalSurvivors extends JavaPlugin {
 
         BukkitScheduler bs = getServer().getScheduler();
         bs.runTaskTimer(this, new BatteryRunner(this), Config.batteryDrainInterval * 60L * 20L, Config.batteryDrainInterval * 60L * 20L);
-        bs.runTaskTimer(this, new CompassUpdater(this), 0L, 100L); // 5 seconds
+        bs.runTaskTimer(this, new CompassUpdater(this), 0L, Config.gpsUpdateInterval * 20L);
         bs.runTaskTimer(this, new ThirstUpdater(this), 0L, Config.thirstInterval * 60L * 20L);
 
         addRecipes();

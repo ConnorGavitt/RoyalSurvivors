@@ -57,6 +57,8 @@ gameplay:
         interval: 10
     # Radius for chat to go if radio is off
     local_chat_radius: 15
+  # How often in seconds for the GPS to update its location. This affects player positions and compass resets.
+  gps_update_interval: 5
   # World to enable RoyalSurvivors in
   world_to_use: zombies
   # Maximum mobs allowed to spawn (< 0 is disable)
