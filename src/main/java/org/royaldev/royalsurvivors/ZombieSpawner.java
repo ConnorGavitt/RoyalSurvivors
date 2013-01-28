@@ -221,6 +221,8 @@ public class ZombieSpawner {
         setEntityEquipment(z.getEquipment(), level);
         if (level >= Config.minLevelPotion && Config.usePotions)
             if (nextInt(1, Config.potionChance) == Config.potionChance - 1) applyPotionEffects(z);
+        if (Config.useSpeed)
+            z.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, Config.speedBoostLevel));
         RoyalSurvivors.debugStatic("zombie: (" + level + ", " + z.getMaxHealth() + ", " + z.getEquipment() + ", " + z.getLocation() + ")");
     }
 

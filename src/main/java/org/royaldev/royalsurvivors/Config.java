@@ -36,6 +36,7 @@ public class Config {
         usePotions = c.getBoolean("gameplay.zombies.potions.enabled");
         debug = c.getBoolean("miscellaneous.debug");
         oceanZombies = c.getBoolean("gameplay.zombies.enable_ocean_zombies");
+        useSpeed = c.getBoolean("gameplay.zombies.speed.enabled");
 
         localChatRadius = c.getLong("gameplay.radio.local_chat_radius");
 
@@ -51,6 +52,7 @@ public class Config {
         thirstPercent = c.getInt("gameplay.thirst.drain.amount");
         thirstInterval = c.getInt("gameplay.thirst.drain.interval");
         thirstRestorePercent = c.getInt("gameplay.thirst.restore.amount");
+        speedBoostLevel = c.getInt("gameplay.zombies.speed.level");
 
         if (hordeChance < 2) hordeChance = 2;
         if (hordeMax < 0) hordeMax = 40;
@@ -58,6 +60,8 @@ public class Config {
         if (hordeMax < hordeMin) hordeMax = hordeMin;
 
         if (potionChance < 2) potionChance = 2;
+
+        if (speedBoostLevel < 0) speedBoostLevel = 0;
 
         try {
             radioMaterial = Material.valueOf(radioItem);
@@ -88,6 +92,7 @@ public class Config {
     public static boolean usePotions;
     public static boolean debug;
     public static boolean oceanZombies;
+    public static boolean useSpeed;
 
     public static double localChatRadius;
 
@@ -103,6 +108,7 @@ public class Config {
     public static int thirstPercent;
     public static int thirstInterval;
     public static int thirstRestorePercent;
+    public static int speedBoostLevel;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;

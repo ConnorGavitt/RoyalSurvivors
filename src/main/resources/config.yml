@@ -16,6 +16,12 @@ gameplay:
   zombies:
     # Ocean zombies spawn where squid should spawn. This makes it harder for survivors in the ocean to live.
     enable_ocean_zombies: false
+    # Options regarding zombie speed
+    speed:
+      # Enable a speed boost for every zombie?
+      enabled: false
+      # What level should the speed boost be at?
+      level: 2
     # Options regarding potion effects on zombies
     potions:
       # Use potion effects on zombies? Some are positive effects, and others are negative.
