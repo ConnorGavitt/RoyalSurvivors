@@ -308,6 +308,7 @@ public class SurvivorsListener implements Listener {
         if (le instanceof Zombie) {
             if (nextInt(1, 8) == 4) e.getDrops().add(new ItemStack(Material.BONE, nextInt(1, 3)));
             if (nextInt(1, 10) == 4) e.getDrops().add(new ItemStack(Material.SULPHUR, nextInt(1, 2)));
+            if (nextInt(1, 12) == 4) e.getDrops().add(new ItemStack(Material.STRING, nextInt(2, 3)));
             if (nextInt(1, 75) == 4) e.getDrops().add(new ItemStack(Material.GLOWSTONE_DUST, nextInt(1, 2)));
         }
     }
