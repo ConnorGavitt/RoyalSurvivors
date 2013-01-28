@@ -94,8 +94,7 @@ public class RoyalSurvivors extends JavaPlugin {
         im.setLore(Arrays.asList(ChatColor.GRAY + "Battery: 100%"));
         chargedCompass.setItemMeta(im);
         batteryRefill = new ShapelessRecipe(chargedCompass);
-        batteryRefill.addIngredient(Config.radioMaterial);
-        batteryRefill.addIngredient(Config.radioBatteryMaterial);
+        batteryRefill.addIngredient(Config.radioMaterial).addIngredient(Config.radioBatteryMaterial);
         getServer().addRecipe(batteryRefill);
         slr = new ShapelessRecipe(new ItemStack(Material.GLOWSTONE_DUST));
         slr.addIngredient(Material.INK_SACK, 15).addIngredient(Material.TORCH);
@@ -103,10 +102,13 @@ public class RoyalSurvivors extends JavaPlugin {
         waterBottle = new ShapelessRecipe(new ItemStack(Material.GLASS_BOTTLE));
         waterBottle.addIngredient(Material.POTION, 0);
         getServer().addRecipe(waterBottle);
-        slr = new ShapelessRecipe(new ItemStack(Material.MELON, 1, (short) 14));
-        slr.addIngredient(Material.INK_SACK, 2);
-        slr.addIngredient(Material.INK_SACK, 2);
-        slr.addIngredient(Material.PAPER);
+        ItemStack medpack = new ItemStack(Material.MELON, 1, (short) 14);
+        im = medpack.getItemMeta();
+        im.setDisplayName(ChatColor.RESET + "Medpack");
+        im.setLore(Arrays.asList(ChatColor.GRAY + "Restores 4 hearts of health on use."));
+        medpack.setItemMeta(im);
+        slr = new ShapelessRecipe(medpack);
+        slr.addIngredient(2, Material.INK_SACK, 2).addIngredient(Material.PAPER);
         getServer().addRecipe(slr);
         slr = new ShapelessRecipe(new ItemStack(Material.SNOW_BALL, 1));
         slr.addIngredient(Material.SULPHUR).addIngredient(Material.EGG).addIngredient(Material.FLINT);
