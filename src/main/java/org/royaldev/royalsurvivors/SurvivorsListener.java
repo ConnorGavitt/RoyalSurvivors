@@ -375,6 +375,7 @@ public class SurvivorsListener implements Listener {
         if (!isInInfectedWorld(e.getEntity())) return;
         World w = e.getLocation().getWorld();
         if (r.nextInt(Config.hordeChance) == Config.hordeChance - 1) {
+            if (e.getEntityType() == EntityType.SQUID && !Config.oceanZombies) return;
             for (int i = 0; i < nextInt(Config.hordeMin, Config.hordeMax); i++)
                 ZombieSpawner.spawnLeveledZombie(e.getLocation());
             e.setCancelled(true);
@@ -466,11 +467,17 @@ public class SurvivorsListener implements Listener {
         int newHealth = p.getHealth() + 8;
         if (newHealth > p.getMaxHealth()) newHealth = p.getMaxHealth();
         p.setHealth(newHealth);
-        hand.setAmount(hand.getAmount() - 1);
+        // until Bukkit fixes removing the last item in interact events, workaround
         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
             @Override
             public void run() {
-                p.setItemInHand(hand);
+                for (int slot = 0; slot < p.getInventory().getSize(); slot++) {
+                    ItemStack is = p.getInventory().getItem(slot);
+                    if (is == null) continue;
+                    if (!is.equals(hand)) continue;
+                    is.setAmount(is.getAmount() - 1);
+                    p.getInventory().setItem(slot, is);
+                }
             }
         });
     }
@@ -492,7 +499,7 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
         Player p = e.getPlayer();
-        if (!isInInfectedWorld(p)) return;
+        if (!isInInfectedWorld(e.getRespawnLocation())) return;
         PConfManager pcm = plugin.getUserdata(p);
         Float thirst = pcm.getFloat("thirst");
         if (thirst == null) thirst = 1F;
@@ -524,15 +531,20 @@ public class SurvivorsListener implements Listener {
         PConfManager pcm = plugin.getUserdata(p);
         Float thirst = pcm.getFloat("thirst");
         if (thirst == null) thirst = 1F;
-        thirst += .2F;
+        thirst += Config.thirstRestorePercent / 100F;
         if (thirst > 1F) thirst = 1F;
         pcm.setFloat(thirst, "thirst");
         p.setExp(thirst);
-        hand.setAmount(hand.getAmount() - 1);
         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
             @Override
             public void run() {
-                p.setItemInHand(hand);
+                for (int slot = 0; slot < p.getInventory().getSize(); slot++) {
+                    ItemStack is = p.getInventory().getItem(slot);
+                    if (is == null) continue;
+                    if (!is.equals(hand)) continue;
+                    is.setAmount(is.getAmount() - 1);
+                    p.getInventory().setItem(slot, is);
+                }
                 p.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE));
             }
         });
