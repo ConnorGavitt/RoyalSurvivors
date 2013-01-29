@@ -242,7 +242,7 @@ public class SurvivorsListener implements Listener {
             if (!(ent instanceof LivingEntity)) continue;
             LivingEntity le = (LivingEntity) ent;
             le.damage((int) Math.ceil(le.getMaxHealth() / nextInt(Config.grenadeHighDamage, Config.grenadeLowDamage)));
-            le.setFireTicks(nextInt(Config.grenadeLowBurn, Config.grenadeHighBurn));
+            le.setFireTicks(nextInt(Config.grenadeLowBurn, Config.grenadeHighBurn) * 20);
         }
     }
 
@@ -309,7 +309,12 @@ public class SurvivorsListener implements Listener {
             if (nextInt(1, 8) == 4) e.getDrops().add(new ItemStack(Material.BONE, nextInt(1, 3)));
             if (nextInt(1, 10) == 4) e.getDrops().add(new ItemStack(Material.SULPHUR, nextInt(1, 2)));
             if (nextInt(1, 12) == 4) e.getDrops().add(new ItemStack(Material.STRING, nextInt(2, 3)));
-            if (nextInt(1, 75) == 4) e.getDrops().add(new ItemStack(Material.GLOWSTONE_DUST, nextInt(1, 2)));
+            ItemStack is = plugin.arrow;
+            is.setAmount(nextInt(1, 5));
+            if (nextInt(1, 25) == 4) e.getDrops().add(is);
+            is = plugin.recharge;
+            is.setAmount(nextInt(1, 2));
+            if (nextInt(1, 75) == 4) e.getDrops().add(is);
         }
     }
 
