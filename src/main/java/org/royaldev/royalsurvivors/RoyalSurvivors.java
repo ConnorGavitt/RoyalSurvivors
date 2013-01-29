@@ -32,6 +32,9 @@ public class RoyalSurvivors extends JavaPlugin {
     public ShapelessRecipe arrowRecipe;
     public ShapedRecipe bowRecipe;
 
+    public ItemStack recharge;
+    public ItemStack arrow;
+
     private final Map<String, PConfManager> pconfs = new HashMap<String, PConfManager>();
 
     /**
@@ -75,7 +78,12 @@ public class RoyalSurvivors extends JavaPlugin {
     }
 
     private void addRecipes() {
-        bowRecipe = new ShapedRecipe(new ItemStack(Material.BOW, 1));
+        ItemStack bow = new ItemStack(Material.BOW, 1);
+        ItemMeta im = bow.getItemMeta();
+        im.setDisplayName(ChatColor.RESET + "M24 Sniper Rifle");
+        im.setLore(Arrays.asList(ChatColor.GRAY + "Uses .308 Caliber Rounds."));
+        bow.setItemMeta(im);
+        bowRecipe = new ShapedRecipe(bow);
         bowRecipe.shape(
                 " G ",
                 "WPI",
@@ -83,20 +91,30 @@ public class RoyalSurvivors extends JavaPlugin {
         );
         bowRecipe.setIngredient('G', Material.GLASS).setIngredient('W', Material.WOOD).setIngredient('I', Material.IRON_INGOT).setIngredient('L', Material.LEVER).setIngredient('P', Material.SULPHUR);
         getServer().addRecipe(bowRecipe);
-        arrowRecipe = new ShapelessRecipe(new ItemStack(Material.ARROW, 8));
+        arrow = new ItemStack(Material.ARROW, 8);
+        im = arrow.getItemMeta();
+        im.setDisplayName(ChatColor.RESET + ".308 Caliber Round");
+        im.setLore(Arrays.asList(ChatColor.GRAY + "Used with the M24 Sniper Rifle."));
+        arrow.setItemMeta(im);
+        arrowRecipe = new ShapelessRecipe(arrow);
         arrowRecipe.addIngredient(2, Material.IRON_INGOT);
         getServer().addRecipe(arrowRecipe);
         ShapelessRecipe slr = new ShapelessRecipe(new ItemStack(Material.PORK, 1));
         slr.addIngredient(Material.ROTTEN_FLESH).addIngredient(Material.GOLD_NUGGET).addIngredient(Material.WATER_BUCKET);
         getServer().addRecipe(slr);
         ItemStack chargedCompass = new ItemStack(Config.radioMaterial, 1);
-        ItemMeta im = chargedCompass.getItemMeta();
+        im = chargedCompass.getItemMeta();
         im.setLore(Arrays.asList(ChatColor.GRAY + "Battery: 100%"));
         chargedCompass.setItemMeta(im);
         batteryRefill = new ShapelessRecipe(chargedCompass);
         batteryRefill.addIngredient(Config.radioMaterial).addIngredient(Config.radioBatteryMaterial);
         getServer().addRecipe(batteryRefill);
-        slr = new ShapelessRecipe(new ItemStack(Material.GLOWSTONE_DUST));
+        recharge = new ItemStack(Material.GLOWSTONE_DUST, 1);
+        im = recharge.getItemMeta();
+        im.setDisplayName(ChatColor.RESET + "Battery Recharge");
+        im.setLore(Arrays.asList(ChatColor.GRAY + "Used with a dead radio."));
+        recharge.setItemMeta(im);
+        slr = new ShapelessRecipe(recharge);
         slr.addIngredient(Material.INK_SACK, 15).addIngredient(Material.TORCH);
         getServer().addRecipe(slr);
         waterBottle = new ShapelessRecipe(new ItemStack(Material.GLASS_BOTTLE));
@@ -110,7 +128,12 @@ public class RoyalSurvivors extends JavaPlugin {
         slr = new ShapelessRecipe(medpack);
         slr.addIngredient(2, Material.INK_SACK, 2).addIngredient(Material.PAPER);
         getServer().addRecipe(slr);
-        slr = new ShapelessRecipe(new ItemStack(Material.SNOW_BALL, 1));
+        ItemStack grenade = new ItemStack(Material.SNOW_BALL, 1);
+        im = grenade.getItemMeta();
+        im.setDisplayName(ChatColor.RESET + "White Phosphorous Grenade");
+        im.setLore(Arrays.asList(ChatColor.GRAY + "Explodes on impact."));
+        grenade.setItemMeta(im);
+        slr = new ShapelessRecipe(grenade);
         slr.addIngredient(Material.SULPHUR).addIngredient(Material.EGG).addIngredient(Material.FLINT);
         getServer().addRecipe(slr);
     }
