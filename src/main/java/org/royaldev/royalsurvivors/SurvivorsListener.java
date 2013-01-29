@@ -559,7 +559,7 @@ public class SurvivorsListener implements Listener {
     public void destroyBlock(BlockBreakEvent e) {
         if (!Config.useGrenades) return;
         Material m = e.getBlock().getType();
-        if (m != Material.SNOW || m != Material.SNOW_BLOCK) return;
+        if (m != Material.SNOW && m != Material.SNOW_BLOCK) return;
         e.setCancelled(true); // let's cancel so no drops
         e.getBlock().setType(Material.AIR); // still have it go away
     }
