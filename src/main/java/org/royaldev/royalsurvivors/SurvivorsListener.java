@@ -1,13 +1,16 @@
 package org.royaldev.royalsurvivors;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Furnace;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -23,6 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExpEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -31,6 +35,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -47,8 +53,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -301,6 +309,78 @@ public class SurvivorsListener implements Listener {
     }
 
     @EventHandler
+    public void smeltFast(FurnaceSmeltEvent e) {
+        if (!(e.getBlock().getState() instanceof Furnace)) return;
+        Furnace f = (Furnace) e.getBlock().getState();
+        if (!isInInfectedWorld(f.getLocation())) return;
+        ConfManager cm = plugin.getConfig("otherdata.yml");
+        Location l = f.getLocation();
+        String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        if (!cm.getBoolean(path, false)) return;
+        f.setCookTime((short) 140); // 7 seconds in = 3 seconds left
+    }
+
+    @EventHandler
+    public void fuelFast(FurnaceBurnEvent e) {
+        if (!(e.getBlock().getState() instanceof Furnace)) return;
+        Furnace f = (Furnace) e.getBlock().getState();
+        if (!isInInfectedWorld(f.getLocation())) return;
+        ConfManager cm = plugin.getConfig("otherdata.yml");
+        Location l = f.getLocation();
+        String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        if (!cm.getBoolean(path, false)) return;
+        f.setCookTime((short) 140); // 7 seconds in = 3 seconds left
+    }
+
+    @EventHandler
+    public void fastFurnaceBreak(BlockBreakEvent e) {
+        Player p = e.getPlayer();
+        if (!isInInfectedWorld(p)) return;
+        if (p.getGameMode() == GameMode.CREATIVE) return;
+        Block b = e.getBlock();
+        if (!(b.getState() instanceof Furnace)) return;
+        Furnace f = (Furnace) b.getState();
+        ConfManager cm = plugin.getConfig("otherdata.yml");
+        Location l = f.getLocation();
+        String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        if (!cm.getBoolean(path, false)) return;
+        cm.set(null, path);
+        e.setCancelled(true);
+        Collection<ItemStack> drops = e.getBlock().getDrops();
+        e.getBlock().setType(Material.AIR);
+        l.getWorld().dropItemNaturally(l, plugin.furnace);
+        for (ItemStack is : drops) {
+            if (is == null) continue;
+            if (is.getType() == Material.FURNACE) continue;
+            l.getWorld().dropItemNaturally(l, is);
+        }
+    }
+
+    @EventHandler
+    public void fastFurnacePlace(BlockPlaceEvent e) {
+        Player p = e.getPlayer();
+        if (!isInInfectedWorld(p)) return;
+        ItemStack hand = e.getItemInHand();
+        if (hand == null) return;
+        if (hand.getType() != Material.FURNACE) return;
+        ItemMeta him = hand.getItemMeta();
+        ItemMeta fim = plugin.furnace.getItemMeta();
+        String hdn = him.getDisplayName();
+        if (hdn == null) return;
+        if (!hdn.equals(fim.getDisplayName())) return;
+        List<String> hl = him.getLore();
+        if (hl == null) return;
+        if (!hl.containsAll(fim.getLore())) return;
+        Block b = e.getBlockPlaced();
+        if (!(b.getState() instanceof Furnace)) return;
+        Furnace f = (Furnace) b.getState();
+        ConfManager cm = plugin.getConfig("otherdata.yml");
+        Location l = f.getLocation();
+        String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        cm.setBoolean(true, path);
+    }
+
+    @EventHandler
     public void onMobDeath(EntityDeathEvent e) {
         if (!isInInfectedWorld(e.getEntity())) return;
         LivingEntity le = e.getEntity();
@@ -309,12 +389,16 @@ public class SurvivorsListener implements Listener {
             if (nextInt(1, 8) == 4) e.getDrops().add(new ItemStack(Material.BONE, nextInt(1, 3)));
             if (nextInt(1, 10) == 4) e.getDrops().add(new ItemStack(Material.SULPHUR, nextInt(1, 2)));
             if (nextInt(1, 12) == 4) e.getDrops().add(new ItemStack(Material.STRING, nextInt(2, 3)));
-            ItemStack is = plugin.arrow;
-            is.setAmount(nextInt(1, 5));
-            if (nextInt(1, 25) == 4) e.getDrops().add(is);
-            is = plugin.recharge;
-            is.setAmount(nextInt(1, 2));
-            if (nextInt(1, 75) == 4) e.getDrops().add(is);
+            if (nextInt(1, 25) == 4) {
+                ItemStack is = plugin.arrow.clone();
+                is.setAmount(nextInt(1, 5));
+                e.getDrops().add(is);
+            }
+            if (nextInt(1, 75) == 4) {
+                ItemStack is = plugin.recharge.clone();
+                is.setAmount(nextInt(1, 2));
+                e.getDrops().add(is);
+            }
         }
     }
 
@@ -562,6 +646,14 @@ public class SurvivorsListener implements Listener {
         if (m != Material.SNOW && m != Material.SNOW_BLOCK) return;
         e.setCancelled(true); // let's cancel so no drops
         e.getBlock().setType(Material.AIR); // still have it go away
+    }
+
+    @EventHandler
+    public void removeBullets(ProjectileHitEvent e) {
+        Entity ent = e.getEntity();
+        if (!isInInfectedWorld(ent)) return;
+        if (!(ent instanceof Arrow)) return;
+        ent.remove();
     }
 
     @EventHandler

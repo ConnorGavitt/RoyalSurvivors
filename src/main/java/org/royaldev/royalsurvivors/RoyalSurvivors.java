@@ -34,8 +34,10 @@ public class RoyalSurvivors extends JavaPlugin {
 
     public ItemStack recharge;
     public ItemStack arrow;
+    public ItemStack furnace;
 
     private final Map<String, PConfManager> pconfs = new HashMap<String, PConfManager>();
+    private final Map<String, ConfManager> confs = new HashMap<String, ConfManager>();
 
     /**
      * Registers a command in the server. If the command isn't defined in plugin.yml
@@ -50,6 +52,22 @@ public class RoyalSurvivors extends JavaPlugin {
             jp.getCommand(command).setExecutor(ce);
         } catch (NullPointerException e) {
             getLogger().warning("Could not register command \"" + command + "\" - not registered in plugin.yml (" + e.getMessage() + ")");
+        }
+    }
+
+    /**
+     * Gets the ConfManager for a path local to the plugin directory.
+     *
+     * @param path ex. "furnaces.yml"
+     * @return ConfManager
+     */
+    public ConfManager getConfig(String path) {
+        synchronized (confs) {
+            if (confs.containsKey(path)) return confs.get(path);
+            ConfManager cm = new ConfManager(path);
+            if (!cm.exists()) cm.createFile();
+            confs.put(path, cm);
+            return cm;
         }
     }
 
@@ -136,6 +154,14 @@ public class RoyalSurvivors extends JavaPlugin {
         slr = new ShapelessRecipe(grenade);
         slr.addIngredient(Material.SULPHUR).addIngredient(Material.EGG).addIngredient(Material.FLINT);
         getServer().addRecipe(slr);
+        furnace = new ItemStack(Material.FURNACE, 1, (short) 14);
+        im = furnace.getItemMeta();
+        im.setDisplayName(ChatColor.RESET + "Modified Furnace");
+        im.setLore(Arrays.asList(ChatColor.GRAY + "Smelts items faster."));
+        furnace.setItemMeta(im);
+        ShapedRecipe sr = new ShapedRecipe(furnace);
+        sr.shape("RRR", "RFR", "RRR").setIngredient('R', Material.REDSTONE).setIngredient('F', Material.FURNACE);
+        getServer().addRecipe(sr);
     }
 
     @Override
