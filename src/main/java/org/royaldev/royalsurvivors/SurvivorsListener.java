@@ -633,10 +633,8 @@ public class SurvivorsListener implements Listener {
         Player p = e.getPlayer();
         if (!isInInfectedWorld(e.getRespawnLocation())) return;
         PConfManager pcm = plugin.getUserdata(p);
-        Float thirst = pcm.getFloat("thirst");
-        if (thirst == null) thirst = 1F;
-        p.setExp(thirst);
-        pcm.setFloat(thirst, "thirst");
+        p.setExp(1F);
+        pcm.setFloat(1F, "thirst");
     }
 
     @EventHandler
