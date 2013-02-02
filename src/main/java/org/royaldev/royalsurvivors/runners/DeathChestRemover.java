@@ -53,7 +53,7 @@ public class DeathChestRemover implements Runnable {
             }
             if (!empty) continue;
             b.setType(Material.AIR);
-            cm.set(null, "deathchests." + key);
+            cm.set("deathchests." + key, null);
         }
     }
 

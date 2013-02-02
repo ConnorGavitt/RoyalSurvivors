@@ -61,9 +61,9 @@ public class BatteryRunner implements Runnable {
             if (percentage < 1) continue; // :(
             percentage -= Config.batteryDrainAmount;
             if (percentage < 1) {
-                p.sendMessage(ChatColor.RED + "Your radio flickers off.");
-                pcm.setBoolean(false, "radio.on");
-                pcm.setInteger(0, "radio.battery");
+                p.sendMessage(ChatColor.BLUE + "Your radio flickers off.");
+                pcm.set("radio.on", false);
+                pcm.set("radio.battery", 0);
                 continue;
             }
             if (!im.hasLore()) im.setLore(Arrays.asList(ChatColor.GRAY + "Battery: " + percentage + "%"));
@@ -74,7 +74,7 @@ public class BatteryRunner implements Runnable {
             }
             is.setItemMeta(im);
             p.getInventory().setItem(slot, is);
-            pcm.setInteger(percentage, "radio.battery");
+            pcm.set("radio.battery", percentage);
         }
     }
 

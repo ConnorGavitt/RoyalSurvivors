@@ -27,7 +27,6 @@ public class Config {
         radioBattery = c.getString("gameplay.radio.battery.item");
         banMessage = c.getString("gameplay.death.ban.message");
 
-        saveUDOnChange = c.getBoolean("saving.save_on_change");
         banOnDeath = c.getBoolean("gameplay.death.ban.enabled");
         deathChest = c.getBoolean("gameplay.death.drops_to_chest");
         spawnZombie = c.getBoolean("gameplay.death.spawn_zombie");
@@ -69,6 +68,7 @@ public class Config {
         grenadeHighBurn = c.getInt("gameplay.grenades.high_burn_time");
         grenadeLowBurn = c.getInt("gameplay.grenades.low_burn_time");
         babyZombieChance = c.getInt("gameplay.zombies.babies.chance_out_of");
+        userdataSaveInterval = c.getInt("saving.save_interval");
 
         if (hordeChance < 2) hordeChance = 2;
         if (hordeMax < 0) hordeMax = 40;
@@ -80,6 +80,8 @@ public class Config {
         if (babyZombieChance < 2) babyZombieChance = 2;
 
         if (speedBoostLevel < 0) speedBoostLevel = 0;
+
+        if (userdataSaveInterval < 1) userdataSaveInterval = 5;
 
         if (grenadeLowDamage < 0) grenadeLowDamage = 8;
         if (grenadeHighDamage < 0) grenadeHighDamage = 3;
@@ -105,7 +107,6 @@ public class Config {
     public static String radioBattery;
     public static String banMessage;
 
-    public static boolean saveUDOnChange;
     public static boolean banOnDeath;
     public static boolean deathChest;
     public static boolean spawnZombie;
@@ -147,6 +148,7 @@ public class Config {
     public static int grenadeLowBurn;
     public static int grenadeHighBurn;
     public static int babyZombieChance;
+    public static int userdataSaveInterval;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;

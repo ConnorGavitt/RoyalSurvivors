@@ -53,7 +53,7 @@ public class CmdRadio implements CommandExecutor {
                     Integer percentage = Integer.valueOf(percent.toString());
                     if (percentage == null) percentage = 100;
                     if (percentage < 1 && Config.useRadioBattery) {
-                        cs.sendMessage(ChatColor.RED + "You try to turn on your radio, but it seems to be out of battery.");
+                        cs.sendMessage(ChatColor.BLUE + "You try to turn on your radio, but it seems to be out of battery.");
                         return true;
                     }
                     String channel = pcm.getString("radio.channel");
@@ -61,11 +61,11 @@ public class CmdRadio implements CommandExecutor {
                         p.sendMessage(ChatColor.BLUE + "You turn on your radio, but all you hear is fuzz. You haven't set it to a channel yet.");
                     else p.sendMessage(ChatColor.BLUE + "You turn on your radio.");
                 }
-                pcm.setBoolean(!isOn, "radio.on");
+                pcm.set("radio.on", !isOn);
                 return true;
             }
             String channel = args[0].toLowerCase();
-            pcm.setString(channel, "radio.channel");
+            pcm.set("radio.channel", channel);
             p.sendMessage(ChatColor.BLUE + "You set your radio to channel " + ChatColor.GRAY + channel + ChatColor.BLUE + ".");
             return true;
         }

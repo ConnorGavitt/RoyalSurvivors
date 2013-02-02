@@ -126,7 +126,7 @@ miscellaneous:
 
 # Userdata saving options
 saving:
-  # Should userdata be saved whenever it is changed? This may slow down performance if true, but it will make sure all
-  # changes persist, even after crashes. If this is false, all userdata will be saved on server shutdown/plugin disable.
-  # Should the server crash, no data will be saved. (userdata contains GPS data, thirst, radio data, etc.)
-  save_on_change: true
+  # How often (in minutes) to save the player userdata to the disk. Userdata will be stored locally and accessed
+  # locally, but it must be saved to persist. The data will be saved when the plugin is disabled, as well. This cannot
+  # be set to lower than 1.
+  save_interval: 5

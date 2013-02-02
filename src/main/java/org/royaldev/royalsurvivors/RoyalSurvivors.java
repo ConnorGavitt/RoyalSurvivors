@@ -17,11 +17,14 @@ import org.royaldev.royalsurvivors.commands.CmdSurvivors;
 import org.royaldev.royalsurvivors.runners.BatteryRunner;
 import org.royaldev.royalsurvivors.runners.CompassUpdater;
 import org.royaldev.royalsurvivors.runners.DeathChestRemover;
+import org.royaldev.royalsurvivors.runners.UserdataSaver;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RoyalSurvivors extends JavaPlugin {
 
@@ -37,8 +40,10 @@ public class RoyalSurvivors extends JavaPlugin {
     public ItemStack arrow;
     public ItemStack furnace;
 
-    private final Map<String, PConfManager> pconfs = new HashMap<String, PConfManager>();
-    private final Map<String, ConfManager> confs = new HashMap<String, ConfManager>();
+    public final Map<String, PConfManager> pconfs = new HashMap<String, PConfManager>();
+    public final Map<String, ConfManager> confs = new HashMap<String, ConfManager>();
+
+    private final Pattern versionPattern = Pattern.compile("(\\d+\\.\\d+\\.\\d+)(\\-SNAPSHOT)?(\\-local\\-(\\d{8}\\.\\d{6})|\\-(\\d+))?");
 
     /**
      * Registers a command in the server. If the command isn't defined in plugin.yml
@@ -177,6 +182,7 @@ public class RoyalSurvivors extends JavaPlugin {
         BukkitScheduler bs = getServer().getScheduler();
         bs.runTaskTimer(this, new BatteryRunner(this), Config.batteryDrainInterval * 60L * 20L, Config.batteryDrainInterval * 60L * 20L);
         bs.runTaskTimer(this, new CompassUpdater(this), 0L, Config.gpsUpdateInterval * 20L);
+        bs.runTaskTimerAsynchronously(this, new UserdataSaver(this), 20L, Config.userdataSaveInterval * 60L * 20L);
         if (Config.deathChestRemoveInterval > 0L)
             bs.runTaskTimer(this, new DeathChestRemover(this), 0L, Config.deathChestRemoveInterval * 60L * 20L);
 
@@ -185,11 +191,38 @@ public class RoyalSurvivors extends JavaPlugin {
         registerCommand(new CmdRadio(this), "radio", this);
         registerCommand(new CmdSurvivors(this), "survivors", this);
         registerCommand(new CmdGPS(this), "gps", this);
+
+        try {
+            Matcher matcher = versionPattern.matcher(getDescription().getVersion());
+            matcher.matches();
+            // 1 = base version
+            // 2 = -SNAPSHOT
+            // 5 = build #
+            String versionMinusBuild = (matcher.group(1) == null) ? "Unknown" : matcher.group(1);
+            String build = (matcher.group(5) == null) ? "local build" : matcher.group(5);
+            if (matcher.group(2) == null) build = "release";
+            Metrics m = new Metrics(this);
+            Metrics.Graph g = m.createGraph("Version");
+            g.addPlotter(
+                    new Metrics.Plotter(versionMinusBuild + "~=~" + build) {
+                        @Override
+                        public int getValue() {
+                            return 1;
+                        }
+                    }
+            );
+            m.addGraph(g);
+            if (m.start()) getLogger().info("Metrics enabled. Thank you!");
+            else getLogger().info("Metrics disabled. If you want to help keep accurate statistics, turn it on!");
+        } catch (Exception e) {
+            getLogger().warning("Couldn't start Metrics!");
+        }
     }
 
     @Override
     public void onDisable() {
-        if (!Config.saveUDOnChange) for (PConfManager pcm : pconfs.values()) pcm.forceSave();
+        for (PConfManager pcm : pconfs.values()) pcm.forceSave();
+        for (ConfManager cm : confs.values()) cm.forceSave();
     }
 
 }

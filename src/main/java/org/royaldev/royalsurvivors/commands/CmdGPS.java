@@ -55,8 +55,8 @@ public class CmdGPS implements CommandExecutor {
             if (subcommand.equalsIgnoreCase("here")) {
                 p.setCompassTarget(p.getLocation());
                 p.sendMessage(ChatColor.BLUE + "Your GPS is now pointing at this position.");
-                pcm.setString("static", "gps.points.type");
-                pcm.setLocation(p.getLocation(), "gps.points.static");
+                pcm.set("gps.points.type", "static");
+                pcm.setLocation("gps.points.static", p.getLocation());
             } else if (subcommand.equalsIgnoreCase("link")) {
                 if (args.length < 2) {
                     p.sendMessage(ChatColor.BLUE + "Your GPS needs to know who to link with.");
@@ -76,8 +76,8 @@ public class CmdGPS implements CommandExecutor {
                 List<String> theirRequests = linkRequests.get(t.getName());
                 if (theirRequests != null) {
                     if (theirRequests.contains(p.getName())) {
-                        plugin.getUserdata(p.getName()).setBoolean(true, "gps.links." + t.getName());
-                        plugin.getUserdata(t.getName()).setBoolean(true, "gps.links." + p.getName());
+                        plugin.getUserdata(p.getName()).set("gps.links." + t.getName(), true);
+                        plugin.getUserdata(t.getName()).set("gps.links." + p.getName(), true);
                         List<String> requests = linkRequests.get(p.getName());
                         if (requests != null) {
                             requests.remove(t.getName());
@@ -105,7 +105,7 @@ public class CmdGPS implements CommandExecutor {
                 t.sendMessage(ChatColor.BLUE + "Your GPS beeps; it has a new link request from " + ChatColor.GRAY + p.getName() + ChatColor.BLUE + ".");
             } else if (subcommand.equalsIgnoreCase("sethome")) {
                 p.sendMessage(ChatColor.BLUE + "Your GPS has saved this location as your home.");
-                pcm.setLocation(p.getLocation(), "gps.home");
+                pcm.setLocation("gps.home", p.getLocation());
             } else if (subcommand.equalsIgnoreCase("home")) {
                 Location l = pcm.getLocation("gps.home");
                 if (l == null) {
@@ -114,7 +114,7 @@ public class CmdGPS implements CommandExecutor {
                 }
                 p.sendMessage(ChatColor.BLUE + "Your GPS is now pointing at your saved home.");
                 p.setCompassTarget(l);
-                pcm.setString("home", "gps.points.type");
+                pcm.set("gps.points.type", "home");
             } else if (subcommand.equalsIgnoreCase("player")) {
                 if (args.length < 2) {
                     p.sendMessage(ChatColor.BLUE + "Your GPS needs a signal to point towards.");
@@ -129,8 +129,8 @@ public class CmdGPS implements CommandExecutor {
                     p.sendMessage(ChatColor.BLUE + "Your GPS is not linked to that signal.");
                     return true;
                 }
-                pcm.setString("player", "gps.points.type");
-                pcm.setString(t.getName(), "gps.points.playername");
+                pcm.set("gps.points.type", "player");
+                pcm.set("gps.points.playername", t.getName());
                 p.setCompassTarget(t.getLocation());
                 p.sendMessage(ChatColor.BLUE + "Your GPS is now pointing towards that signal.");
             } else p.sendMessage(ChatColor.BLUE + "Nothing happens...");

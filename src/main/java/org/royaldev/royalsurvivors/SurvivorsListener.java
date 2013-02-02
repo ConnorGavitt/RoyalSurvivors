@@ -206,7 +206,7 @@ public class SurvivorsListener implements Listener {
         if (new Date().getTime() > banExpiresAfter) {
             p.setBanned(false);
             e.setResult(PlayerLoginEvent.Result.ALLOWED);
-            pcm.setBoolean(false, "banned");
+            pcm.set("banned", false);
             pcm.set(null, "banexpiresafter");
             return;
         }
@@ -225,7 +225,7 @@ public class SurvivorsListener implements Listener {
             thirst = 1F;
         }
         p.setExp(thirst);
-        pcm.setFloat(thirst, "thirst");
+        pcm.set("thirst", thirst);
     }
 
     @EventHandler
@@ -262,7 +262,7 @@ public class SurvivorsListener implements Listener {
             thirst = 1F;
         }
         p.setExp(thirst);
-        pcm.setFloat(thirst, "thirst");
+        pcm.set("thirst", thirst);
     }
 
     @EventHandler
@@ -279,7 +279,7 @@ public class SurvivorsListener implements Listener {
         Float thirst = pcm.getFloat("thirst");
         if (thirst == null) {
             thirst = 1F;
-            pcm.setFloat(thirst, "thirst");
+            pcm.set("thirst", thirst);
         }
         p.setExp(thirst);
         p.setLevel(0);
@@ -342,7 +342,7 @@ public class SurvivorsListener implements Listener {
         Location l = f.getLocation();
         String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         if (!cm.getBoolean(path, false)) return;
-        cm.set(null, path);
+        cm.set(path, null);
         e.setCancelled(true);
         Collection<ItemStack> drops = e.getBlock().getDrops();
         e.getBlock().setType(Material.AIR);
@@ -375,7 +375,7 @@ public class SurvivorsListener implements Listener {
         ConfManager cm = plugin.getConfig("otherdata.yml");
         Location l = f.getLocation();
         String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
-        cm.setBoolean(true, path);
+        cm.set(path, true);
     }
 
     @EventHandler
@@ -428,7 +428,7 @@ public class SurvivorsListener implements Listener {
         b.setType(Material.CHEST);
         Location l = b.getLocation();
         String path = "deathchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
-        cm.setBoolean(true, path);
+        cm.set(path, true);
         Chest c = (Chest) b.getState();
         List<ItemStack> notAdded = new ArrayList<ItemStack>();
         for (ItemStack is : e.getDrops())
@@ -444,7 +444,7 @@ public class SurvivorsListener implements Listener {
             b.setType(Material.CHEST);
             l = b.getLocation();
             path = "deathchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
-            cm.setBoolean(true, path);
+            cm.set(path, true);
             c = (Chest) b.getState();
             for (ItemStack is : notAdded)
                 for (ItemStack stillNo : c.getInventory().addItem(is).values()) stillLeftOver.add(stillNo);
@@ -545,7 +545,7 @@ public class SurvivorsListener implements Listener {
         if (!(e.getRecipe() instanceof ShapelessRecipe)) return;
         ShapelessRecipe slr = (ShapelessRecipe) e.getRecipe();
         if (!shapelessRecipesMatch(slr, plugin.batteryRefill)) return;
-        plugin.getUserdata(p).setInteger(100, "radio.battery");
+        plugin.getUserdata(p).set("radio.battery", 100);
     }
 
     @EventHandler
@@ -588,7 +588,7 @@ public class SurvivorsListener implements Listener {
         Float thirst = pcm.getFloat("thirst");
         if (thirst == null) {
             thirst = 1F;
-            pcm.setFloat(thirst, "thirst");
+            pcm.set("thirst", thirst);
         }
         p.setExp(thirst);
     }
@@ -629,7 +629,7 @@ public class SurvivorsListener implements Listener {
         Float thirst = pcm.getFloat("thirst");
         if (thirst == null) {
             thirst = 1F;
-            pcm.setFloat(thirst, "thirst");
+            pcm.set("thirst", thirst);
         }
         p.setExp(thirst);
     }
@@ -640,7 +640,7 @@ public class SurvivorsListener implements Listener {
         if (!isInInfectedWorld(e.getRespawnLocation())) return;
         PConfManager pcm = plugin.getUserdata(p);
         p.setExp(1F);
-        pcm.setFloat(1F, "thirst");
+        pcm.set("thirst", 1F);
     }
 
     @EventHandler
@@ -667,8 +667,8 @@ public class SurvivorsListener implements Listener {
         if (!Config.banOnDeath) return;
         p.setBanned(true);
         PConfManager pcm = plugin.getUserdata(p);
-        pcm.setBoolean(true, "banned");
-        pcm.setLong((Config.banLength < 0) ? 0L : (Config.banLength * 60 * 20) + new Date().getTime(), "banexpiresafter");
+        pcm.set("banned", true);
+        pcm.set("banexpiresafter", (Config.banLength < 0) ? 0L : (Config.banLength * 60 * 20) + new Date().getTime());
     }
 
     @EventHandler
@@ -687,8 +687,8 @@ public class SurvivorsListener implements Listener {
         if (thirst >= 1F) return; // let's not waste water bottles
         thirst += Config.thirstRestorePercent / 100F;
         if (thirst > 1F) thirst = 1F;
-        pcm.setFloat(thirst, "thirst");
-        pcm.setFloat((float) Config.thirstSaturationMax, "thirstSaturation");
+        pcm.set("thirst", thirst);
+        pcm.set("thirstSaturation", (float) Config.thirstSaturationMax);
         p.setExp(thirst);
         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
             @Override
@@ -721,7 +721,7 @@ public class SurvivorsListener implements Listener {
             else if (p.isSneaking()) saturation -= Config.thirstSneak;
             else saturation -= Config.thirstWalk;
             if (from.getY() != to.getY() && !isOnLadder(p)) saturation -= Config.thirstJump;
-            pcm.setFloat(saturation, "thirstSaturation");
+            pcm.set("thirstSaturation", saturation);
             return;
         }
         Float thirst = pcm.getFloat("thirst");
@@ -736,11 +736,11 @@ public class SurvivorsListener implements Listener {
             p.sendMessage(ChatColor.BLUE + "You have died of dehydration.");
             p.setHealth(0);
             p.setExp(1F);
-            pcm.setFloat(1F, "thirst");
+            pcm.set("thirst", 1F);
             return;
         }
         thirst /= Config.thirstMax;
-        pcm.setFloat(thirst, "thirst");
+        pcm.set("thirst", thirst);
         p.setExp(thirst);
     }
 
@@ -763,7 +763,7 @@ public class SurvivorsListener implements Listener {
             if (is == null) continue;
             l.getWorld().dropItemNaturally(l, is);
         }
-        cm.set(null, path);
+        cm.set(path, null);
     }
 
 }
