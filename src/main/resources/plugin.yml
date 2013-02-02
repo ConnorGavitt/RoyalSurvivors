@@ -1,5 +1,5 @@
 name: RoyalSurvivors
-version: ${project.version}
+version: ${pluginversion}
 main: org.royaldev.royalsurvivors.RoyalSurvivors
 author: jkcclemens
 
