@@ -41,7 +41,9 @@ public class Config {
         useBabies = c.getBoolean("gameplay.zombies.babies.enabled");
         babiesAlwaysFast = c.getBoolean("gameplay.zombies.babies.always_fast");
 
-        localChatRadius = c.getLong("gameplay.radio.local_chat_radius");
+        localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
+
+        deathChestRemoveInterval = c.getLong("miscellaneous.remove_death_chests_every");
 
         maxMobs = c.getInt("gameplay.max_mobs_allowed");
         hordeChance = c.getInt("gameplay.zombies.hordes.chance_out_of");
@@ -118,6 +120,8 @@ public class Config {
     public static boolean babiesAlwaysFast;
 
     public static double localChatRadius;
+
+    public static long deathChestRemoveInterval;
 
     public static int maxMobs;
     public static int hordeChance;

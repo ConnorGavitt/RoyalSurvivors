@@ -60,6 +60,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class SurvivorsListener implements Listener {
@@ -112,13 +113,7 @@ public class SurvivorsListener implements Listener {
     }
 
     private boolean hasRadio(Player p) {
-        Material radio;
-        try {
-            radio = Material.valueOf(Config.radioItem.toUpperCase());
-        } catch (Exception ex) {
-            return false;
-        }
-        return p.getInventory().contains(radio);
+        return p.getInventory().contains(Config.radioMaterial);
     }
 
     private boolean isInInfectedWorld(Entity e) {
@@ -147,7 +142,10 @@ public class SurvivorsListener implements Listener {
         }
         if (!nearby.contains(p) && !radio) p.sendMessage(p.getName() + ChatColor.RESET + ": " + e.getMessage());
         e.getRecipients().removeAll(remove);
-        if (!radio) e.setCancelled(true);
+        if (!radio) {
+            Logger.getLogger("Minecraft").info(p.getName() + ChatColor.RESET + ": " + e.getMessage());
+            e.setCancelled(true);
+        }
     }
 
     private void handleRadioChat(AsyncPlayerChatEvent e) {
@@ -404,13 +402,13 @@ public class SurvivorsListener implements Listener {
 
     private Block getAdjacentEmptyBlock(Block b) {
         Block a = b.getRelative(BlockFace.NORTH);
-        if (!a.isEmpty()) return a;
+        if (a.isEmpty()) return a;
         a = b.getRelative(BlockFace.EAST);
-        if (!a.isEmpty()) return a;
+        if (a.isEmpty()) return a;
         a = b.getRelative(BlockFace.WEST);
-        if (!a.isEmpty()) return a;
+        if (a.isEmpty()) return a;
         a = b.getRelative(BlockFace.SOUTH);
-        if (!a.isEmpty()) return a;
+        if (a.isEmpty()) return a;
         return null;
     }
 
@@ -418,6 +416,7 @@ public class SurvivorsListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent e) {
         if (!isInInfectedWorld(e.getEntity())) return;
         Player p = e.getEntity();
+        ConfManager cm = plugin.getConfig("otherdata.yml");
         e.setDroppedExp(0);
         if (e.getDrops().isEmpty()) return;
         Location place = p.getLocation();
@@ -427,6 +426,9 @@ public class SurvivorsListener implements Listener {
             b = place.getBlock();
         }
         b.setType(Material.CHEST);
+        Location l = b.getLocation();
+        String path = "deathchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        cm.setBoolean(true, path);
         Chest c = (Chest) b.getState();
         List<ItemStack> notAdded = new ArrayList<ItemStack>();
         for (ItemStack is : e.getDrops())
@@ -435,10 +437,14 @@ public class SurvivorsListener implements Listener {
         if (!notAdded.isEmpty()) {
             b = getAdjacentEmptyBlock(b);
             if (b == null) {
-                e.getDrops().removeAll(notAdded);
+                e.getDrops().clear(); // remove all drops
+                e.getDrops().addAll(notAdded); // add what didn't fit
                 return;
             }
             b.setType(Material.CHEST);
+            l = b.getLocation();
+            path = "deathchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+            cm.setBoolean(true, path);
             c = (Chest) b.getState();
             for (ItemStack is : notAdded)
                 for (ItemStack stillNo : c.getInventory().addItem(is).values()) stillLeftOver.add(stillNo);
@@ -693,6 +699,7 @@ public class SurvivorsListener implements Listener {
                     if (!is.equals(hand)) continue;
                     is.setAmount(is.getAmount() - 1);
                     p.getInventory().setItem(slot, is);
+                    break;
                 }
                 p.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE));
             }
@@ -735,6 +742,28 @@ public class SurvivorsListener implements Listener {
         thirst /= Config.thirstMax;
         pcm.setFloat(thirst, "thirst");
         p.setExp(thirst);
+    }
+
+    @EventHandler
+    public void deathChestBreak(BlockBreakEvent e) {
+        Block b = e.getBlock();
+        if (!isInInfectedWorld(b.getLocation())) return;
+        if (!(b.getState() instanceof Chest)) return;
+        ConfManager cm = plugin.getConfig("otherdata.yml");
+        Location l = b.getLocation();
+        String path = "deathchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        boolean isDeathChest = cm.getBoolean(path, false);
+        if (!isDeathChest) return;
+        e.setCancelled(true);
+        Chest c = (Chest) b.getState();
+        ItemStack[] drops = c.getBlockInventory().getContents().clone(); // inv of only this chest
+        c.getBlockInventory().clear();
+        b.setType(Material.AIR);
+        for (ItemStack is : drops) {
+            if (is == null) continue;
+            l.getWorld().dropItemNaturally(l, is);
+        }
+        cm.set(null, path);
     }
 
 }

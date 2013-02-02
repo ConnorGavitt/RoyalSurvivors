@@ -16,6 +16,7 @@ import org.royaldev.royalsurvivors.commands.CmdRadio;
 import org.royaldev.royalsurvivors.commands.CmdSurvivors;
 import org.royaldev.royalsurvivors.runners.BatteryRunner;
 import org.royaldev.royalsurvivors.runners.CompassUpdater;
+import org.royaldev.royalsurvivors.runners.DeathChestRemover;
 
 import java.io.File;
 import java.util.Arrays;
@@ -176,6 +177,8 @@ public class RoyalSurvivors extends JavaPlugin {
         BukkitScheduler bs = getServer().getScheduler();
         bs.runTaskTimer(this, new BatteryRunner(this), Config.batteryDrainInterval * 60L * 20L, Config.batteryDrainInterval * 60L * 20L);
         bs.runTaskTimer(this, new CompassUpdater(this), 0L, Config.gpsUpdateInterval * 20L);
+        if (Config.deathChestRemoveInterval > 0L)
+            bs.runTaskTimer(this, new DeathChestRemover(this), 0L, Config.deathChestRemoveInterval * 60L * 20L);
 
         addRecipes();
 
