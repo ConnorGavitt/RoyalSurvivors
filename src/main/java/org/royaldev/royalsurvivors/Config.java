@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
+import java.util.List;
 
 public class Config {
 
@@ -69,6 +70,8 @@ public class Config {
         grenadeLowBurn = c.getInt("gameplay.grenades.low_burn_time");
         babyZombieChance = c.getInt("gameplay.zombies.babies.chance_out_of");
         userdataSaveInterval = c.getInt("saving.save_interval");
+
+        allowedCommands = c.getStringList("miscellaneous.allowed_commands");
 
         if (hordeChance < 2) hordeChance = 2;
         if (hordeMax < 0) hordeMax = 40;
@@ -152,5 +155,7 @@ public class Config {
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;
+
+    public static List<String> allowedCommands;
 
 }

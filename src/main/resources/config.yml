@@ -118,6 +118,9 @@ gameplay:
 
 # Miscellaneous options
 miscellaneous:
+  allowed_commands:
+  - "/login"
+  - "/register"
   # Prints a whole bunch of interesting dev information to console
   debug: false
   # How often to loop through all death chests (on the main thread), check if they are empty, and if they are, remove

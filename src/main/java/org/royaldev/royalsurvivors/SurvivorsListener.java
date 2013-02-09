@@ -480,6 +480,11 @@ public class SurvivorsListener implements Listener {
         String root = split[0].substring(1); // the command label (remove /)
         PluginCommand pc = plugin.getCommand(root);
         if (pc == null) {
+            pc = plugin.getServer().getPluginCommand(root);
+            if (pc != null) {
+                if (Config.allowedCommands.contains(pc.getName())) return;
+                for (String alias : pc.getAliases()) if (Config.allowedCommands.contains(alias)) return;
+            }
             p.sendMessage(ChatColor.BLUE + "Nothing happens...");
             e.setCancelled(true);
         }
