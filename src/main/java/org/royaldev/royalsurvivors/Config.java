@@ -44,6 +44,7 @@ public class Config {
         allowLootChestBreak = c.getBoolean("loot_chests.allow_chest_break");
         refillIfNotEmpty = c.getBoolean("loot_chests.refill.if_not_empty");
         harderTorches = c.getBoolean("gameplay.harder_torches.enabled");
+        useSquidLoot = c.getBoolean("miscellaneous.squid_loot.enabled");
 
         localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
         toxicRadius = c.getDouble("gameplay.zombies.toxicspray.radius");
@@ -80,8 +81,10 @@ public class Config {
         toxicInterval = c.getInt("gameplay.zombies.toxicspray.interval");
         toxicDuration = c.getInt("gameplay.zombies.toxicspray.duration");
         repairChestRepairAmount = c.getInt("miscellaneous.repair_chests.repair_amount");
+        squidLootChance = c.getInt("miscellaneous.squid_loot.chance");
 
         allowedCommands = c.getStringList("miscellaneous.allowed_commands");
+        squidLootSets = c.getStringList("miscellaneous.squid_loot.loot_sets");
 
         if (toxicRadius < 1) toxicRadius = 1;
         if (toxicInterval < 1) toxicInterval = 1;
@@ -142,6 +145,7 @@ public class Config {
     public static boolean allowLootChestBreak;
     public static boolean refillIfNotEmpty;
     public static boolean harderTorches;
+    public static boolean useSquidLoot;
 
     public static double localChatRadius;
     public static double toxicRadius;
@@ -178,10 +182,12 @@ public class Config {
     public static int toxicInterval;
     public static int toxicDuration;
     public static int repairChestRepairAmount;
+    public static int squidLootChance;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;
 
     public static List<String> allowedCommands;
+    public static List<String> squidLootSets;
 
 }

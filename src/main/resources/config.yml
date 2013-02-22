@@ -166,6 +166,15 @@ loot_chests:
 
 # Miscellaneous options
 miscellaneous:
+  # Since squid are wooden boxes, you can enable squid to drop random loot on kill.
+  squid_loot:
+    # Enable squid loot?
+    enabled: true
+    # Chance of squid loot in percentage
+    chance: 100
+    # Loot sets defined in loot chests to drop
+    loot_sets:
+    - "common_set"
   # Until an anvil API is implemented, repair chests will be used
   repair_chests:
     # How much damage to repair on an item in a repair chest

@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.Squid;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -986,5 +987,27 @@ public class SurvivorsListener implements Listener {
             if (is.getType() == Material.CHEST) continue;
             l.getWorld().dropItemNaturally(l, is);
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void squidLoot(EntityDamageByEntityEvent e) {
+        if (!Config.useSquidLoot) return;
+        if (r.nextInt(100) > Config.squidLootChance) return;
+        if (!(e.getDamager() instanceof Player)) return;
+        Player p = (Player) e.getDamager();
+        Entity ent = e.getEntity();
+        if (!(ent instanceof Squid)) return;
+        Squid squid = (Squid) ent;
+        if (squid.isDead()) return;
+        if (squid.getHealth() - e.getDamage() > 0) return;
+        if (!isInInfectedWorld(squid) || !isInInfectedWorld(p)) return;
+        List<String> lootSets = Config.squidLootSets;
+        if (lootSets.isEmpty()) return;
+        String lootSet = lootSets.get(r.nextInt(lootSets.size()));
+        final LootChest lc = LootChest.getLootChest(lootSet);
+        if (lc == null) return;
+        Location l = squid.getLocation();
+        World w = l.getWorld();
+        for (ItemStack drop : lc.getRandomLoot()) w.dropItemNaturally(l, drop);
     }
 }
