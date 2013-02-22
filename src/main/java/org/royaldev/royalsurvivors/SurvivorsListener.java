@@ -942,6 +942,49 @@ public class SurvivorsListener implements Listener {
         }
         cm.set(path, null);
         p.sendMessage(ChatColor.BLUE + "You have broken a loot chest.");
+    }
 
+    @EventHandler
+    public void placeRepairChest(BlockPlaceEvent e) {
+        Player p = e.getPlayer();
+        if (!isInInfectedWorld(p)) return;
+        ItemStack hand = e.getItemInHand();
+        if (hand == null) return;
+        if (hand.getType() != Material.CHEST) return;
+        ItemMeta him = hand.getItemMeta();
+        ItemMeta fim = plugin.repairChest.getItemMeta();
+        String hdn = him.getDisplayName();
+        if (hdn == null) return;
+        if (!hdn.equals(fim.getDisplayName())) return;
+        List<String> hl = him.getLore();
+        if (hl == null) return;
+        if (!hl.containsAll(fim.getLore())) return;
+        Block b = e.getBlockPlaced();
+        if (!(b.getState() instanceof Chest)) return;
+        Chest c = (Chest) b.getState();
+        ConfManager cm = plugin.getConfig("otherdata.yml");
+        Location l = c.getLocation();
+        String path = "repairchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        cm.set(path + ".enabled", true);
+    }
+
+    @EventHandler
+    public void breakRepairChest(BlockBreakEvent e) {
+        Block b = e.getBlock();
+        if (!isInInfectedWorld(b.getLocation())) return;
+        ConfManager cm = plugin.getConfig("otherdata.yml");
+        Location l = b.getLocation();
+        String path = "repairchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        if (!cm.getBoolean(path + ".enabled", false)) return;
+        cm.set(path, null);
+        e.setCancelled(true);
+        Collection<ItemStack> drops = e.getBlock().getDrops();
+        e.getBlock().setType(Material.AIR);
+        l.getWorld().dropItemNaturally(l, plugin.repairChest);
+        for (ItemStack is : drops) {
+            if (is == null) continue;
+            if (is.getType() == Material.CHEST) continue;
+            l.getWorld().dropItemNaturally(l, is);
+        }
     }
 }

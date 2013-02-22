@@ -18,6 +18,7 @@ import org.royaldev.royalsurvivors.runners.BatteryRunner;
 import org.royaldev.royalsurvivors.runners.CompassUpdater;
 import org.royaldev.royalsurvivors.runners.DeathChestRemover;
 import org.royaldev.royalsurvivors.runners.LootChestFiller;
+import org.royaldev.royalsurvivors.runners.RepairChestRunner;
 import org.royaldev.royalsurvivors.runners.UserdataSaver;
 import org.royaldev.royalsurvivors.runners.ZombieSpray;
 
@@ -43,6 +44,7 @@ public class RoyalSurvivors extends JavaPlugin {
     public ItemStack arrow;
     public ItemStack furnace;
     public ItemStack toxicspray;
+    public ItemStack repairChest;
 
     public static RoyalSurvivors instance;
 
@@ -191,6 +193,14 @@ public class RoyalSurvivors extends JavaPlugin {
         slr = new ShapelessRecipe(new ItemStack(Material.SLIME_BALL, 4));
         slr.addIngredient(Material.CLAY_BALL).addIngredient(Material.ROTTEN_FLESH).addIngredient(Material.WATER_BUCKET);
         getServer().addRecipe(slr);
+        repairChest = new ItemStack(Material.CHEST);
+        im = repairChest.getItemMeta();
+        im.setDisplayName(ChatColor.RESET + "Repair Chest");
+        im.setLore(Arrays.asList(ChatColor.GRAY + "Repairs items stored in it."));
+        repairChest.setItemMeta(im);
+        sr = new ShapedRecipe(repairChest);
+        sr.shape("III", "ICI", "III").setIngredient('I', Material.IRON_BLOCK).setIngredient('C', Material.CHEST);
+        getServer().addRecipe(sr);
     }
 
     @Override
@@ -209,6 +219,7 @@ public class RoyalSurvivors extends JavaPlugin {
         bs.runTaskTimer(this, new CompassUpdater(this), 0L, Config.gpsUpdateInterval * 20L);
         bs.runTaskTimer(this, new ZombieSpray(this), 20L, Config.toxicInterval);
         bs.runTaskTimer(this, new LootChestFiller(this), 20L, 200L);
+        bs.runTaskTimer(this, new RepairChestRunner(this), 20L, Config.repairChestRunInterval);
         bs.runTaskTimerAsynchronously(this, new UserdataSaver(this), 20L, Config.userdataSaveInterval * 60L * 20L);
         if (Config.deathChestRemoveInterval > 0L)
             bs.runTaskTimer(this, new DeathChestRemover(this), 0L, Config.deathChestRemoveInterval * 60L * 20L);

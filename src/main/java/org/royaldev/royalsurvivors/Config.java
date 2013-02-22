@@ -50,6 +50,7 @@ public class Config {
         lootChestRadius = c.getDouble("loot_chests.refill.radius");
 
         deathChestRemoveInterval = c.getLong("miscellaneous.remove_death_chests_every");
+        repairChestRunInterval = c.getLong("miscellaneous.repair_chests.repair_frequency");
 
         maxMobs = c.getInt("gameplay.max_mobs_allowed");
         hordeChance = c.getInt("gameplay.zombies.hordes.chance_out_of");
@@ -78,11 +79,15 @@ public class Config {
         userdataSaveInterval = c.getInt("saving.save_interval");
         toxicInterval = c.getInt("gameplay.zombies.toxicspray.interval");
         toxicDuration = c.getInt("gameplay.zombies.toxicspray.duration");
+        repairChestRepairAmount = c.getInt("miscellaneous.repair_chests.repair_amount");
 
         allowedCommands = c.getStringList("miscellaneous.allowed_commands");
 
         if (toxicRadius < 1) toxicRadius = 1;
         if (toxicInterval < 1) toxicInterval = 1;
+
+        if (deathChestRemoveInterval < 1L) deathChestRemoveInterval = 5L;
+        if (repairChestRunInterval < 1L) repairChestRunInterval = 5L;
 
         if (hordeChance < 2) hordeChance = 2;
         if (hordeMax < 0) hordeMax = 40;
@@ -143,6 +148,7 @@ public class Config {
     public static double lootChestRadius;
 
     public static long deathChestRemoveInterval;
+    public static long repairChestRunInterval;
 
     public static int maxMobs;
     public static int hordeChance;
@@ -171,6 +177,7 @@ public class Config {
     public static int userdataSaveInterval;
     public static int toxicInterval;
     public static int toxicDuration;
+    public static int repairChestRepairAmount;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;

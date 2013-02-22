@@ -166,6 +166,12 @@ loot_chests:
 
 # Miscellaneous options
 miscellaneous:
+  # Until an anvil API is implemented, repair chests will be used
+  repair_chests:
+    # How much damage to repair on an item in a repair chest
+    repair_amount: 5
+    # How often to repair items in chests in ticks
+    repair_frequency: 100
   allowed_commands:
   - "login"
   - "register"
