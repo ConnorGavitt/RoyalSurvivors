@@ -17,7 +17,9 @@ import org.royaldev.royalsurvivors.commands.CmdSurvivors;
 import org.royaldev.royalsurvivors.runners.BatteryRunner;
 import org.royaldev.royalsurvivors.runners.CompassUpdater;
 import org.royaldev.royalsurvivors.runners.DeathChestRemover;
+import org.royaldev.royalsurvivors.runners.LootChestFiller;
 import org.royaldev.royalsurvivors.runners.UserdataSaver;
+import org.royaldev.royalsurvivors.runners.ZombieSpray;
 
 import java.io.File;
 import java.util.Arrays;
@@ -34,11 +36,15 @@ public class RoyalSurvivors extends JavaPlugin {
     public ShapelessRecipe batteryRefill;
     public ShapelessRecipe waterBottle;
     public ShapelessRecipe arrowRecipe;
+    public ShapelessRecipe torchRecipe;
     public ShapedRecipe bowRecipe;
 
     public ItemStack recharge;
     public ItemStack arrow;
     public ItemStack furnace;
+    public ItemStack toxicspray;
+
+    public static RoyalSurvivors instance;
 
     public final Map<String, PConfManager> pconfs = new HashMap<String, PConfManager>();
     public final Map<String, ConfManager> confs = new HashMap<String, ConfManager>();
@@ -113,7 +119,7 @@ public class RoyalSurvivors extends JavaPlugin {
                 "WPI",
                 "WL "
         );
-        bowRecipe.setIngredient('G', Material.GLASS).setIngredient('W', Material.WOOD).setIngredient('I', Material.IRON_INGOT).setIngredient('L', Material.LEVER).setIngredient('P', Material.SULPHUR);
+        bowRecipe.setIngredient('G', Material.GLASS).setIngredient('W', Material.WOOD, -1).setIngredient('I', Material.IRON_INGOT).setIngredient('L', Material.LEVER).setIngredient('P', Material.SULPHUR);
         getServer().addRecipe(bowRecipe);
         arrow = new ItemStack(Material.ARROW, 8);
         im = arrow.getItemMeta();
@@ -168,10 +174,29 @@ public class RoyalSurvivors extends JavaPlugin {
         ShapedRecipe sr = new ShapedRecipe(furnace);
         sr.shape("RRR", "RFR", "RRR").setIngredient('R', Material.REDSTONE).setIngredient('F', Material.FURNACE);
         getServer().addRecipe(sr);
+        toxicspray = new ItemStack(Material.INK_SACK, 1, (short) 4);
+        im = toxicspray.getItemMeta();
+        im.setDisplayName(ChatColor.RESET + "Toxic Zombie Spray");
+        im.setLore(Arrays.asList(ChatColor.GRAY + "Damages all zombies fatally around the wearer."));
+        toxicspray.setItemMeta(im);
+        slr = new ShapelessRecipe(toxicspray);
+        slr.addIngredient(Material.INK_SACK, 4).addIngredient(Material.TORCH);
+        getServer().addRecipe(slr);
+        if (Config.harderTorches) {
+            ItemStack torch = new ItemStack(Material.TORCH, 8);
+            torchRecipe = new ShapelessRecipe(torch);
+            torchRecipe.addIngredient(Material.STICK).addIngredient(2, Material.COAL).addIngredient(Material.STICK);
+            getServer().addRecipe(slr);
+        }
+        slr = new ShapelessRecipe(new ItemStack(Material.SLIME_BALL, 4));
+        slr.addIngredient(Material.CLAY_BALL).addIngredient(Material.ROTTEN_FLESH).addIngredient(Material.WATER_BUCKET);
+        getServer().addRecipe(slr);
     }
 
     @Override
     public void onEnable() {
+        instance = this;
+
         dataFolder = getDataFolder();
 
         c = new Config(this);
@@ -182,6 +207,8 @@ public class RoyalSurvivors extends JavaPlugin {
         BukkitScheduler bs = getServer().getScheduler();
         bs.runTaskTimer(this, new BatteryRunner(this), Config.batteryDrainInterval * 60L * 20L, Config.batteryDrainInterval * 60L * 20L);
         bs.runTaskTimer(this, new CompassUpdater(this), 0L, Config.gpsUpdateInterval * 20L);
+        bs.runTaskTimer(this, new ZombieSpray(this), 20L, Config.toxicInterval);
+        bs.runTaskTimer(this, new LootChestFiller(this), 20L, 200L);
         bs.runTaskTimerAsynchronously(this, new UserdataSaver(this), 20L, Config.userdataSaveInterval * 60L * 20L);
         if (Config.deathChestRemoveInterval > 0L)
             bs.runTaskTimer(this, new DeathChestRemover(this), 0L, Config.deathChestRemoveInterval * 60L * 20L);

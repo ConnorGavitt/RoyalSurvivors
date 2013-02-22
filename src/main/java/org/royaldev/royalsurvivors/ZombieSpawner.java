@@ -1,5 +1,6 @@
 package org.royaldev.royalsurvivors;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -21,7 +22,7 @@ import java.util.Random;
 public class ZombieSpawner {
 
     private enum EquipmentType {
-        HELM, CHESTPLATE, LEGGINGS, BOOTS, WEAPON
+        HELM, CHESTPLATE, LEGGINGS, BOOTS, WEAPON, BOW
     }
 
     private static final Object spawnLock = new Object();
@@ -43,6 +44,7 @@ public class ZombieSpawner {
             put(EquipmentType.LEGGINGS, allEnchants);
             put(EquipmentType.BOOTS, concat(new Enchantment[]{Enchantment.PROTECTION_FALL}, allEnchants));
             put(EquipmentType.WEAPON, new Enchantment[]{Enchantment.DAMAGE_ALL, Enchantment.DAMAGE_ARTHROPODS, Enchantment.DAMAGE_UNDEAD, Enchantment.KNOCKBACK, Enchantment.FIRE_ASPECT, Enchantment.LOOT_BONUS_MOBS});
+            put(EquipmentType.BOW, new Enchantment[]{Enchantment.ARROW_DAMAGE, Enchantment.ARROW_FIRE, Enchantment.ARROW_INFINITE, Enchantment.ARROW_KNOCKBACK});
 
         }
     };
@@ -207,6 +209,20 @@ public class ZombieSpawner {
         }
     }
 
+    public static EquipmentType getEquipmentType(ItemStack is) {
+        if (ArrayUtils.contains(helms, is.getType())) return EquipmentType.HELM;
+        else if (ArrayUtils.contains(chestplates, is.getType())) return EquipmentType.CHESTPLATE;
+        else if (ArrayUtils.contains(leggings, is.getType())) return EquipmentType.LEGGINGS;
+        else if (ArrayUtils.contains(boots, is.getType())) return EquipmentType.BOOTS;
+        else if (ArrayUtils.contains(weapon, is.getType())) return EquipmentType.WEAPON;
+        else if (is.getType() == Material.BOW) return EquipmentType.BOW;
+        return null;
+    }
+
+    public static Enchantment getRandomEnchantment(EquipmentType et) {
+        return enchants.get(et)[r.nextInt(enchants.get(et).length)];
+    }
+
     public static Zombie spawnLeveledZombie(Location l) {
         return spawnLeveledZombie(l, r.nextInt(8));
     }
@@ -228,6 +244,13 @@ public class ZombieSpawner {
             z.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, Config.speedBoostLevel));
     }
 
+    /**
+     * Do not call inside of a creature spawn event, as this will cause a stack overflow.
+     *
+     * @param l     Location to spawn zombie at
+     * @param level Level of zombie
+     * @return Zombie spawned
+     */
     public static Zombie spawnLeveledZombie(Location l, int level) {
         if (level < 1) level = 1; // 1 is min level (max health 20)
         if (level > 7) level = 7; // 7 is max level (max health 160)

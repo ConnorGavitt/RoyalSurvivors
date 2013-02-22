@@ -40,8 +40,14 @@ public class Config {
         useGrenades = c.getBoolean("gameplay.grenades.enabled");
         useBabies = c.getBoolean("gameplay.zombies.babies.enabled");
         babiesAlwaysFast = c.getBoolean("gameplay.zombies.babies.always_fast");
+        toxicEnabled = c.getBoolean("gameplay.zombies.toxicspray.enabled");
+        allowLootChestBreak = c.getBoolean("loot_chests.allow_chest_break");
+        refillIfNotEmpty = c.getBoolean("loot_chests.refill.if_not_empty");
+        harderTorches = c.getBoolean("gameplay.harder_torches.enabled");
 
         localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
+        toxicRadius = c.getDouble("gameplay.zombies.toxicspray.radius");
+        lootChestRadius = c.getDouble("loot_chests.refill.radius");
 
         deathChestRemoveInterval = c.getLong("miscellaneous.remove_death_chests_every");
 
@@ -70,8 +76,13 @@ public class Config {
         grenadeLowBurn = c.getInt("gameplay.grenades.low_burn_time");
         babyZombieChance = c.getInt("gameplay.zombies.babies.chance_out_of");
         userdataSaveInterval = c.getInt("saving.save_interval");
+        toxicInterval = c.getInt("gameplay.zombies.toxicspray.interval");
+        toxicDuration = c.getInt("gameplay.zombies.toxicspray.duration");
 
         allowedCommands = c.getStringList("miscellaneous.allowed_commands");
+
+        if (toxicRadius < 1) toxicRadius = 1;
+        if (toxicInterval < 1) toxicInterval = 1;
 
         if (hordeChance < 2) hordeChance = 2;
         if (hordeMax < 0) hordeMax = 40;
@@ -122,8 +133,14 @@ public class Config {
     public static boolean useGrenades;
     public static boolean useBabies;
     public static boolean babiesAlwaysFast;
+    public static boolean toxicEnabled;
+    public static boolean allowLootChestBreak;
+    public static boolean refillIfNotEmpty;
+    public static boolean harderTorches;
 
     public static double localChatRadius;
+    public static double toxicRadius;
+    public static double lootChestRadius;
 
     public static long deathChestRemoveInterval;
 
@@ -152,6 +169,8 @@ public class Config {
     public static int grenadeHighBurn;
     public static int babyZombieChance;
     public static int userdataSaveInterval;
+    public static int toxicInterval;
+    public static int toxicDuration;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;

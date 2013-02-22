@@ -17,6 +17,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.Event;
@@ -27,6 +28,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExpEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -49,6 +51,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
@@ -197,10 +200,9 @@ public class SurvivorsListener implements Listener {
     public void banHandler(PlayerLoginEvent e) {
         Player p = e.getPlayer();
         PConfManager pcm = plugin.getUserdata(p);
-        Boolean banned = pcm.getBoolean("banned");
-        if (banned == null) banned = false;
-        Long banExpiresAfter = pcm.getLong("banexpiresafter");
-        if (banExpiresAfter == null) banExpiresAfter = -1L;
+        if (!pcm.isSet("banned") || !pcm.isSet("banexpiresafter")) return;
+        boolean banned = pcm.getBoolean("banned");
+        long banExpiresAfter = pcm.getLong("banexpiresafter");
         if (!banned || banExpiresAfter <= 0L) return;
         // if time now is after the time ban should expire
         if (new Date().getTime() > banExpiresAfter) {
@@ -214,16 +216,14 @@ public class SurvivorsListener implements Listener {
         e.setKickMessage(Config.banMessage);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent e) {
         if (!isInInfectedWorld(e.getPlayer())) return;
         Player p = e.getPlayer();
         p.setLevel(0); // no XP for you!
         PConfManager pcm = plugin.getUserdata(p);
-        Float thirst = pcm.getFloat("thirst");
-        if (thirst == null) {
-            thirst = 1F;
-        }
+        float thirst = pcm.getFloat("thirst");
+        if (!pcm.isSet("thirst")) thirst = 1F;
         p.setExp(thirst);
         pcm.set("thirst", thirst);
     }
@@ -240,6 +240,7 @@ public class SurvivorsListener implements Listener {
     public void phosphorousGrenades(ProjectileHitEvent e) {
         if (!Config.useGrenades) return;
         Projectile p = e.getEntity();
+        if (!isInInfectedWorld(p)) return;
         if (!(p instanceof Snowball)) return;
         Location hit = p.getLocation();
         hit.getWorld().createExplosion(hit, 0F, false);
@@ -257,10 +258,8 @@ public class SurvivorsListener implements Listener {
         Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
         PConfManager pcm = plugin.getUserdata(p);
-        Float thirst = pcm.getFloat("thirst");
-        if (thirst == null) {
-            thirst = 1F;
-        }
+        float thirst = pcm.getFloat("thirst");
+        if (!pcm.isSet("thirst")) thirst = 1F;
         p.setExp(thirst);
         pcm.set("thirst", thirst);
     }
@@ -276,8 +275,8 @@ public class SurvivorsListener implements Listener {
         if (!isInInfectedWorld(e.getPlayer())) return;
         Player p = e.getPlayer();
         PConfManager pcm = plugin.getUserdata(p);
-        Float thirst = pcm.getFloat("thirst");
-        if (thirst == null) {
+        float thirst = pcm.getFloat("thirst");
+        if (!pcm.isSet("thirst")) {
             thirst = 1F;
             pcm.set("thirst", thirst);
         }
@@ -511,11 +510,11 @@ public class SurvivorsListener implements Listener {
 
     @EventHandler
     public void zombieIsMasterRace(CreatureSpawnEvent e) {
+        if (!isInInfectedWorld(e.getEntity())) return;
         if (e.getEntityType() == EntityType.ZOMBIE) { // don't force spawn zombies when they're spawning already!
             ZombieSpawner.applyZombieCharacteristics((Zombie) e.getEntity(), r.nextInt(8));
             return;
         }
-        if (!isInInfectedWorld(e.getEntity())) return;
         World w = e.getLocation().getWorld();
         if (r.nextInt(Config.hordeChance) == Config.hordeChance - 1) {
             if (e.getEntityType() == EntityType.SQUID && !Config.oceanZombies) return;
@@ -530,7 +529,8 @@ public class SurvivorsListener implements Listener {
             if (nextInt(1, 10) < 8) ZombieSpawner.spawnLeveledZombie(e.getLocation()); // 4/5 chance
             return;
         }
-        if (!(e.getEntity() instanceof Monster)) return; // don't replace nice animals
+        Entity ent = e.getEntity();
+        if (!(ent instanceof Monster) && !(ent instanceof Slime)) return;
         e.setCancelled(true);
         ZombieSpawner.spawnLeveledZombie(e.getLocation());
     }
@@ -578,6 +578,8 @@ public class SurvivorsListener implements Listener {
         if (rr instanceof ShapedRecipe) {
             ShapedRecipe srr = (ShapedRecipe) rr;
             if (result.getType() == Material.BOW && !shapedRecipesMatch(srr, plugin.bowRecipe)) e.setCancelled(true);
+            if (Config.harderTorches && result.getType() == Material.TORCH && !srr.getIngredientMap().values().containsAll(plugin.torchRecipe.getIngredientList()))
+                e.setCancelled(true);
             if (result.getType() == Material.ARROW && !srr.getIngredientMap().values().containsAll(plugin.arrowRecipe.getIngredientList()))
                 e.setCancelled(true);
         }
@@ -590,8 +592,8 @@ public class SurvivorsListener implements Listener {
         if (!(isInInfectedWorld(p))) return;
         p.setLevel(0);
         PConfManager pcm = plugin.getUserdata(p);
-        Float thirst = pcm.getFloat("thirst");
-        if (thirst == null) {
+        float thirst = pcm.getFloat("thirst");
+        if (!pcm.isSet("thirst")) {
             thirst = 1F;
             pcm.set("thirst", thirst);
         }
@@ -631,21 +633,41 @@ public class SurvivorsListener implements Listener {
         if (!isInInfectedWorld(p)) return;
         e.setExpToDrop(0);
         PConfManager pcm = plugin.getUserdata(p);
-        Float thirst = pcm.getFloat("thirst");
-        if (thirst == null) {
+        float thirst = pcm.getFloat("thirst");
+        if (!pcm.isSet("thirst")) {
             thirst = 1F;
             pcm.set("thirst", thirst);
         }
         p.setExp(thirst);
     }
 
+    private final List<String> respawns = new ArrayList<String>();
+
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
+        World w = plugin.getServer().getWorld(Config.worldToUse);
+        if (w == null) return;
         Player p = e.getPlayer();
-        if (!isInInfectedWorld(e.getRespawnLocation())) return;
+        synchronized (respawns) {
+            if (!respawns.contains(p.getName())) return;
+        }
+        if (!isInInfectedWorld(e.getRespawnLocation())) e.setRespawnLocation(w.getSpawnLocation());
         PConfManager pcm = plugin.getUserdata(p);
         p.setExp(1F);
         pcm.set("thirst", 1F);
+        synchronized (respawns) {
+            respawns.remove(p.getName());
+        }
+    }
+
+    @EventHandler
+    public void spawnInWorldIfDiedInWorld(PlayerDeathEvent e) {
+        Player p = e.getEntity();
+        if (!isInInfectedWorld(p.getLocation())) return;
+        synchronized (respawns) {
+            respawns.add(p.getName());
+        }
+
     }
 
     @EventHandler
@@ -687,8 +709,8 @@ public class SurvivorsListener implements Listener {
         if (!isInInfectedWorld(p)) return;
         //if (!p.isSneaking()) return;
         PConfManager pcm = plugin.getUserdata(p);
-        Float thirst = pcm.getFloat("thirst");
-        if (thirst == null) thirst = 1F;
+        float thirst = pcm.getFloat("thirst");
+        if (!pcm.isSet("thirst")) thirst = 1F;
         if (thirst >= 1F) return; // let's not waste water bottles
         thirst += Config.thirstRestorePercent / 100F;
         if (thirst > 1F) thirst = 1F;
@@ -715,6 +737,7 @@ public class SurvivorsListener implements Listener {
     public void oohYouTouchMyTaLaLa(PlayerMoveEvent e) {
         Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
+        if (p.getGameMode() == GameMode.CREATIVE) return;
         Location from = e.getFrom();
         Location to = e.getTo();
         if (from.getX() == to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ()) return; // looking around
@@ -729,8 +752,8 @@ public class SurvivorsListener implements Listener {
             pcm.set("thirstSaturation", saturation);
             return;
         }
-        Float thirst = pcm.getFloat("thirst");
-        if (thirst == null) thirst = 1F;
+        float thirst = pcm.getFloat("thirst");
+        if (!pcm.isSet("thirst")) thirst = 1F;
         thirst *= Config.thirstMax;
         if (p.isSprinting()) thirst -= Config.thirstSprint;
         else if (p.isSneaking()) thirst -= Config.thirstSneak;
@@ -771,4 +794,154 @@ public class SurvivorsListener implements Listener {
         cm.set(path, null);
     }
 
+    @EventHandler
+    public void toxicSprayUse(PlayerInteractEvent e) {
+        if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_AIR) return;
+        final Player p = e.getPlayer();
+        if (!isInInfectedWorld(p)) return;
+        final ItemStack hand = p.getItemInHand();
+        if (hand.getType() != Material.INK_SACK) return;
+        if (hand.getDurability() != (short) 4) return;
+        ItemMeta him = hand.getItemMeta();
+        ItemMeta fim = plugin.toxicspray.getItemMeta();
+        String hdn = him.getDisplayName();
+        if (hdn == null) return;
+        if (!hdn.equals(fim.getDisplayName())) return;
+        List<String> hl = him.getLore();
+        if (hl == null) return;
+        if (!hl.containsAll(fim.getLore())) return;
+        PConfManager pcm = plugin.getUserdata(p);
+        if (pcm.getBoolean("toxicspray_on", false)) return; // don't waste toxicsprays
+        pcm.set("toxicspray_on", true);
+        pcm.set("toxicspray_expire", new Date().getTime() + (Config.toxicDuration * 1000));
+        // until Bukkit fixes removing the last item in interact events, workaround
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                for (int slot = 0; slot < p.getInventory().getSize(); slot++) {
+                    ItemStack is = p.getInventory().getItem(slot);
+                    if (is == null) continue;
+                    if (!is.equals(hand)) continue;
+                    is.setAmount(is.getAmount() - 1);
+                    p.getInventory().setItem(slot, is);
+                }
+                p.sendMessage(ChatColor.BLUE + "You sprayed the toxic fumes on yourself. They will last for " + Config.toxicDuration + " seconds.");
+            }
+        });
+    }
+
+    private Inventory shuffleInventory(Inventory i) {
+        List<Integer> unusedSlots = new ArrayList<Integer>();
+        for (int slot = 0; slot < i.getSize(); slot++) {
+            unusedSlots.add(slot);
+        }
+        ItemStack[] contents = i.getContents().clone();
+        i.clear();
+        for (ItemStack is : contents) {
+            int slot = unusedSlots.get(r.nextInt(unusedSlots.size()));
+            i.setItem(slot, is);
+            unusedSlots.remove(Integer.valueOf(slot));
+        }
+        return i;
+    }
+
+    @EventHandler
+    public void signListen(SignChangeEvent e) {
+        /*
+        0: [Loot]
+        1: set name
+        2: refill time (minutes)
+        3: empty
+         */
+        Player p = e.getPlayer();
+        if (!p.hasPermission("rsurv.loot")) return;
+        final Block b = e.getBlock();
+        if (!isInInfectedWorld(b.getLocation())) return;
+        if (!e.getLine(0).equalsIgnoreCase("[Loot]")) return;
+        if (e.getLine(1).trim().isEmpty()) {
+            p.sendMessage(ChatColor.BLUE + "You must include the loot chest name.");
+            return;
+        }
+        if (e.getLine(2).trim().isEmpty()) {
+            p.sendMessage(ChatColor.BLUE + "You must include a refill time.");
+            return;
+        }
+        int refill;
+        try {
+            refill = Integer.parseInt(e.getLine(2).trim());
+        } catch (NumberFormatException ex) {
+            p.sendMessage(ChatColor.BLUE + "Your refill time must be a whole number.");
+            return;
+        }
+        if (refill < 1) {
+            p.sendMessage(ChatColor.BLUE + "Your refill time must be more than zero.");
+            return;
+        }
+        final LootChest lc = LootChest.getLootChest(e.getLine(1));
+        if (lc == null) {
+            p.sendMessage(ChatColor.BLUE + "No such loot chest.");
+            return;
+        }
+        byte data = b.getData();
+        b.setType(Material.AIR);
+        b.setType(Material.CHEST);
+        if (!(b.getState() instanceof Chest)) {
+            p.sendMessage(ChatColor.BLUE + "An error ocurred. Please try again.");
+            return;
+        }
+        Chest c = (Chest) b.getState();
+        b.setData(signToChest(data));
+        for (ItemStack is : lc.getRandomLoot()) c.getInventory().addItem(is);
+        shuffleInventory(c.getInventory());
+        ConfManager cm = plugin.getConfig("otherdata.yml");
+        Location l = b.getLocation();
+        String path = "lootchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        cm.set(path + ".enabled", true);
+        cm.set(path + ".loot_chest", e.getLine(1).trim());
+        cm.set(path + ".refill", refill);
+    }
+
+    private byte signToChest(byte b) {
+        switch (b) {
+            case 0x0: // south
+            case 0x1: // south-southwest
+            case 0xF: // south-southeast
+                return 0x3; // south
+            case 0x2: // southwest
+            case 0x3: // west-southwest
+            case 0x4: // west
+            case 0x5: // west-northwest
+            case 0x6: // northwest
+                return 0x4; // west
+            case 0x7: // north-northwest
+            case 0x8: // north
+            case 0x9: // north-northeast
+                return 0x2; // north
+            case 0xA: // northeast
+            case 0xB: // east-northeast
+            case 0xC: // east
+            case 0xD: // east-southeast
+            case 0xE: // southeast
+                return 0x5; // east
+        }
+        return b;
+    }
+
+    @EventHandler
+    public void breakLootChest(BlockBreakEvent e) {
+        Player p = e.getPlayer();
+        Block b = e.getBlock();
+        if (!isInInfectedWorld(b.getLocation())) return;
+        ConfManager cm = plugin.getConfig("otherdata.yml");
+        Location l = b.getLocation();
+        String path = "lootchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
+        if (!cm.getBoolean(path + ".enabled", false)) return;
+        if (!p.hasPermission("rsurv.loot") && !Config.allowLootChestBreak) {
+            e.setCancelled(true);
+            return;
+        }
+        cm.set(path, null);
+        p.sendMessage(ChatColor.BLUE + "You have broken a loot chest.");
+
+    }
 }
