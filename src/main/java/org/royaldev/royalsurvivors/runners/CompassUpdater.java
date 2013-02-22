@@ -39,6 +39,10 @@ public class CompassUpdater implements Runnable {
                 Location l = pcm.getLocation("gps.home");
                 if (l == null) continue;
                 p.setCompassTarget(l);
+            } else if (compassType.equalsIgnoreCase("location")) {
+                Location pointAt = pcm.getLocation("gps.points.location");
+                if (pointAt == null) continue;
+                p.setCompassTarget(pointAt);
             }
         }
     }

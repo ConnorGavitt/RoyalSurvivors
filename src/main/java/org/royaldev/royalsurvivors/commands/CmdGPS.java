@@ -28,6 +28,10 @@ public class CmdGPS implements CommandExecutor {
         return p.getInventory().contains(Material.COMPASS);
     }
 
+    /*
+    TODO: Add coordinate pointing
+     */
+
     // Map<Requester, List<Requests>>
     private final Map<String, List<String>> linkRequests = new HashMap<String, List<String>>();
 
@@ -133,6 +137,25 @@ public class CmdGPS implements CommandExecutor {
                 pcm.set("gps.points.playername", t.getName());
                 p.setCompassTarget(t.getLocation());
                 p.sendMessage(ChatColor.BLUE + "Your GPS is now pointing towards that signal.");
+            } else if (subcommand.equalsIgnoreCase("coord") || subcommand.equalsIgnoreCase("coords") || subcommand.equalsIgnoreCase("coordinate") || subcommand.equalsIgnoreCase("coordinates")) {
+                if (args.length < 4) {
+                    p.sendMessage(ChatColor.BLUE + "The GPS must be told three coordinates.");
+                    return true;
+                }
+                double x, y, z;
+                try {
+                    x = Double.parseDouble(args[1]);
+                    y = Double.parseDouble(args[2]);
+                    z = Double.parseDouble(args[3]);
+                } catch (NumberFormatException e) {
+                    p.sendMessage(ChatColor.BLUE + "The coordinates were invalid.");
+                    return true;
+                }
+                Location pointTo = new Location(p.getWorld(), x, y, z);
+                pcm.set("gps.points.type", "location");
+                pcm.setLocation("gps.points.location", pointTo);
+                p.setCompassTarget(pointTo);
+                p.sendMessage(ChatColor.BLUE + "Your GPS is now pointing towards those coordinates.");
             } else p.sendMessage(ChatColor.BLUE + "Nothing happens...");
             return true;
         }
