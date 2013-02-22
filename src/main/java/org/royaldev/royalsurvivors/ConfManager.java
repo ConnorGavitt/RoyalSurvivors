@@ -20,7 +20,7 @@ public class ConfManager extends YamlConfiguration {
      *
      * @param filename Filename (local) for the config
      */
-    public ConfManager(String filename) {
+    ConfManager(String filename) {
         super();
         File dataFolder = RoyalSurvivors.dataFolder;
         path = dataFolder + File.separator + filename;
@@ -38,7 +38,7 @@ public class ConfManager extends YamlConfiguration {
      *
      * @param file File object for the config
      */
-    public ConfManager(File file) {
+    ConfManager(File file) {
         super();
         File dataFolder = RoyalSurvivors.dataFolder;
         path = dataFolder + File.separator + file.getName();
@@ -47,6 +47,14 @@ public class ConfManager extends YamlConfiguration {
             load(pconfl);
         } catch (Exception ignored) {
         }
+    }
+
+    /**
+     * No outside construction, please.
+     */
+    @SuppressWarnings("unused")
+    ConfManager() {
+        path = "";
     }
 
     public boolean exists() {

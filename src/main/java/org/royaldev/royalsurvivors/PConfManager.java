@@ -18,7 +18,7 @@ public class PConfManager extends YamlConfiguration {
      *
      * @param p Player to manage
      */
-    public PConfManager(OfflinePlayer p) {
+    PConfManager(OfflinePlayer p) {
         super();
         File dataFolder = RoyalSurvivors.dataFolder;
         pconfl = new File(dataFolder + File.separator + "userdata" + File.separator + p.getName().toLowerCase() + ".yml");
@@ -33,7 +33,7 @@ public class PConfManager extends YamlConfiguration {
      *
      * @param p Player to manage
      */
-    public PConfManager(String p) {
+    PConfManager(String p) {
         super();
         File dataFolder = RoyalSurvivors.dataFolder;
         pconfl = new File(dataFolder + File.separator + "userdata" + File.separator + p.toLowerCase() + ".yml");
@@ -41,6 +41,13 @@ public class PConfManager extends YamlConfiguration {
             load(pconfl);
         } catch (Exception ignored) {
         }
+    }
+
+    /**
+     * No outside construction, please.
+     */
+    @SuppressWarnings("unused")
+    PConfManager() {
     }
 
     public boolean exists() {
@@ -98,7 +105,7 @@ public class PConfManager extends YamlConfiguration {
         set(path + ".yaw", value.getYaw());
     }
 
-    public Float getFloat(String path) {
+    public float getFloat(String path) {
         return (float) getDouble(path);
     }
 }
