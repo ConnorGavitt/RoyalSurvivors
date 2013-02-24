@@ -87,6 +87,15 @@ public class SurvivorsListener implements Listener {
         if (!Config.texturePackURL.isEmpty()) p.setTexturePack(Config.texturePackURL);
     }
 
+    private void resetPlayerCharacteristics(Player p) {
+        p.setMaxHealth(20);
+        p.setHealth(20);
+        p.setWalkSpeed(.2F);
+        p.setFlySpeed(.1F);
+        p.setMaxHealth(300);
+        p.setCanPickupItems(true);
+    }
+
     /**
      * Checks to see if the ingredients of the recipes are the same.
      *
@@ -1015,6 +1024,7 @@ public class SurvivorsListener implements Listener {
         if (!(ent instanceof Squid)) return;
         Squid squid = (Squid) ent;
         if (squid.isDead()) return;
+        if (squid.getHealth() <= 0) return;
         if (squid.getHealth() - e.getDamage() > 0) return;
         if (!isInInfectedWorld(squid) || !isInInfectedWorld(p)) return;
         List<String> lootSets = Config.squidLootSets;
@@ -1030,7 +1040,7 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void onChangeWorld(PlayerChangedWorldEvent e) {
         Player p = e.getPlayer();
-        if (!isInInfectedWorld(p)) return;
-        setPlayerCharacteristics(p);
+        if (isInInfectedWorld(p)) setPlayerCharacteristics(p);
+        else resetPlayerCharacteristics(p);
     }
 }
