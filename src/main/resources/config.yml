@@ -1,5 +1,23 @@
 # Options that directly affect gameplay
 gameplay:
+  # Options that affect the players
+  player:
+    # Maximum health for players in half-hearts (20 = 10 hearts, 15 = 7.5 hearts)
+    # Cannot be less than 1
+    max_health: 20
+    # URL to a texture pack to ask players to download
+    # Empty disables this
+    texture_pack_url: ""
+    # How fast a player walks (default .2) - speed cannot be < -1 or > 1
+    walk_speed: .2
+    # How fast a player flies (default .1) - speed cannot be < -1 or > 1
+    fly_speed: .1
+    # How long a player can hold their breath in ticks (1 tick = 1/20 second)
+    # Default = 300 (15 seconds)
+    maximum_underwater_air: 300
+    # Can the player pick up items?
+    # Default = true
+    can_pick_up_items: true
   # Options relating to harder torches
   harder_torches:
     # Enable harder torches? Torches will require one flint, two coal, and one stick.

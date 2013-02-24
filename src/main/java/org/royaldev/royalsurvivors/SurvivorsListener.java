@@ -42,6 +42,7 @@ import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -74,6 +75,16 @@ public class SurvivorsListener implements Listener {
 
     public SurvivorsListener(RoyalSurvivors instance) {
         plugin = instance;
+    }
+
+    private void setPlayerCharacteristics(Player p) {
+        p.setHealth(Config.maxHealth);
+        p.setMaxHealth(Config.maxHealth);
+        p.setWalkSpeed(Config.walkSpeed);
+        p.setFlySpeed(Config.flySpeed);
+        p.setMaximumAir(Config.maxAir);
+        p.setCanPickupItems(Config.canPickupItems);
+        if (!Config.texturePackURL.isEmpty()) p.setTexturePack(Config.texturePackURL);
     }
 
     /**
@@ -221,6 +232,7 @@ public class SurvivorsListener implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         if (!isInInfectedWorld(e.getPlayer())) return;
         Player p = e.getPlayer();
+        setPlayerCharacteristics(p);
         p.setLevel(0); // no XP for you!
         PConfManager pcm = plugin.getUserdata(p);
         float thirst = pcm.getFloat("thirst");
@@ -490,12 +502,12 @@ public class SurvivorsListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void radioChatter(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
         PConfManager pcm = plugin.getUserdata(p);
-        Boolean isOn = pcm.getBoolean("radio.on");
+        boolean isOn = pcm.getBoolean("radio.on", false);
         e.setMessage(decolorize(e.getMessage()));
         List<Player> toRemove = new ArrayList<Player>();
         for (Player t : e.getRecipients()) {
@@ -503,7 +515,6 @@ public class SurvivorsListener implements Listener {
             toRemove.add(t);
         }
         e.getRecipients().removeAll(toRemove);
-        if (isOn == null) isOn = false;
         if (!isOn) handleLocalChat(e, false);
         else handleRadioChat(e);
         if (!e.getRecipients().contains(p)) e.getRecipients().add(p);
@@ -671,6 +682,13 @@ public class SurvivorsListener implements Listener {
 
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void myDingDingDong(PlayerRespawnEvent e) {
+        Player p = e.getPlayer();
+        if (!isInInfectedWorld(e.getRespawnLocation())) return;
+        setPlayerCharacteristics(p);
+    }
+
     @EventHandler
     public void destroyBlock(BlockBreakEvent e) {
         if (!Config.useGrenades) return;
@@ -833,9 +851,7 @@ public class SurvivorsListener implements Listener {
 
     private Inventory shuffleInventory(Inventory i) {
         List<Integer> unusedSlots = new ArrayList<Integer>();
-        for (int slot = 0; slot < i.getSize(); slot++) {
-            unusedSlots.add(slot);
-        }
+        for (int slot = 0; slot < i.getSize(); slot++) unusedSlots.add(slot);
         ItemStack[] contents = i.getContents().clone();
         i.clear();
         for (ItemStack is : contents) {
@@ -1009,5 +1025,12 @@ public class SurvivorsListener implements Listener {
         Location l = squid.getLocation();
         World w = l.getWorld();
         for (ItemStack drop : lc.getRandomLoot()) w.dropItemNaturally(l, drop);
+    }
+
+    @EventHandler
+    public void onChangeWorld(PlayerChangedWorldEvent e) {
+        Player p = e.getPlayer();
+        if (!isInInfectedWorld(p)) return;
+        setPlayerCharacteristics(p);
     }
 }

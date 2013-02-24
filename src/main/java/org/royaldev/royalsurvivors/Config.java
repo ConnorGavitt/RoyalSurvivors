@@ -27,6 +27,7 @@ public class Config {
         radioItem = c.getString("gameplay.radio.item");
         radioBattery = c.getString("gameplay.radio.battery.item");
         banMessage = c.getString("gameplay.death.ban.message");
+        texturePackURL = c.getString("gameplay.player.texture_pack_url").trim();
 
         banOnDeath = c.getBoolean("gameplay.death.ban.enabled");
         deathChest = c.getBoolean("gameplay.death.drops_to_chest");
@@ -45,10 +46,19 @@ public class Config {
         refillIfNotEmpty = c.getBoolean("loot_chests.refill.if_not_empty");
         harderTorches = c.getBoolean("gameplay.harder_torches.enabled");
         useSquidLoot = c.getBoolean("miscellaneous.squid_loot.enabled");
+        canPickupItems = c.getBoolean("gameplay.player.can_pick_up_items");
 
         localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
         toxicRadius = c.getDouble("gameplay.zombies.toxicspray.radius");
         lootChestRadius = c.getDouble("loot_chests.refill.radius");
+
+        try {
+            walkSpeed = Float.parseFloat(c.getString("gameplay.player.walk_speed"));
+            flySpeed = Float.parseFloat(c.getString("gameplay.player.fly_speed"));
+        } catch (NumberFormatException e) {
+            walkSpeed = .2F;
+            flySpeed = .1F;
+        }
 
         deathChestRemoveInterval = c.getLong("miscellaneous.remove_death_chests_every");
         repairChestRunInterval = c.getLong("miscellaneous.repair_chests.repair_frequency");
@@ -82,11 +92,19 @@ public class Config {
         toxicDuration = c.getInt("gameplay.zombies.toxicspray.duration");
         repairChestRepairAmount = c.getInt("miscellaneous.repair_chests.repair_amount");
         squidLootChance = c.getInt("miscellaneous.squid_loot.chance");
+        maxHealth = c.getInt("gameplay.player.max_health");
+        maxAir = c.getInt("gameplay.player.maximum_underwater_air");
 
         allowedCommands = c.getStringList("miscellaneous.allowed_commands");
         squidLootSets = c.getStringList("miscellaneous.squid_loot.loot_sets");
 
-        if (toxicRadius < 1) toxicRadius = 1;
+        if (maxHealth < 1) maxHealth = 1;
+        if (maxAir < 0) maxAir = 0;
+
+        if (walkSpeed > 1F || walkSpeed < -1F) walkSpeed = .2F;
+        if (flySpeed > 1F || flySpeed < -1F) flySpeed = .1F;
+
+        if (toxicRadius < 1D) toxicRadius = 1D;
         if (toxicInterval < 1) toxicInterval = 1;
 
         if (deathChestRemoveInterval < 1L) deathChestRemoveInterval = 5L;
@@ -128,6 +146,7 @@ public class Config {
     public static String radioItem;
     public static String radioBattery;
     public static String banMessage;
+    public static String texturePackURL;
 
     public static boolean banOnDeath;
     public static boolean deathChest;
@@ -146,6 +165,7 @@ public class Config {
     public static boolean refillIfNotEmpty;
     public static boolean harderTorches;
     public static boolean useSquidLoot;
+    public static boolean canPickupItems;
 
     public static double localChatRadius;
     public static double toxicRadius;
@@ -183,6 +203,11 @@ public class Config {
     public static int toxicDuration;
     public static int repairChestRepairAmount;
     public static int squidLootChance;
+    public static int maxHealth;
+    public static int maxAir;
+
+    public static float walkSpeed;
+    public static float flySpeed;
 
     public static Material radioMaterial;
     public static Material radioBatteryMaterial;
