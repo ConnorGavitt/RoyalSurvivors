@@ -94,12 +94,15 @@ public class Config {
         squidLootChance = c.getInt("miscellaneous.squid_loot.chance");
         maxHealth = c.getInt("gameplay.player.max_health");
         maxAir = c.getInt("gameplay.player.maximum_underwater_air");
+        babySpeedLevel = c.getInt("gameplay.zombies.babies.speed_level");
 
         allowedCommands = c.getStringList("miscellaneous.allowed_commands");
         squidLootSets = c.getStringList("miscellaneous.squid_loot.loot_sets");
 
         if (maxHealth < 1) maxHealth = 1;
         if (maxAir < 0) maxAir = 0;
+
+        if (babySpeedLevel < 0) babySpeedLevel = 0;
 
         if (walkSpeed > 1F || walkSpeed < -1F) walkSpeed = .2F;
         if (flySpeed > 1F || flySpeed < -1F) flySpeed = .1F;
@@ -205,6 +208,7 @@ public class Config {
     public static int squidLootChance;
     public static int maxHealth;
     public static int maxAir;
+    public static int babySpeedLevel;
 
     public static float walkSpeed;
     public static float flySpeed;

@@ -70,6 +70,8 @@ gameplay:
       enabled: true
       # Should babies always be given a speed boost?
       always_fast: true
+      # Speed level of the baby (0 = Speed I, 1 = Speed II, etc.)
+      speed_level: 3
       # 1/chance_out_of = percent chance of spawning a baby zombie
       chance_out_of: 50
     # Options regarding zombie speed

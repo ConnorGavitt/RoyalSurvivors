@@ -171,7 +171,7 @@ public class ZombieSpawner {
                 if (nextInt(1, 25) == 10) ee.setChestplate(getRandomItemStack(EquipmentType.LEGGINGS));
                 break;
             case 2:
-                // 15% chance
+                // 8.3% chance
                 if (nextInt(1, 12) == 8) {
                     ee.setChestplate(getRandomItemStack(EquipmentType.LEGGINGS));
                     ee.setItemInHand(getRandomItemStack(EquipmentType.WEAPON));
@@ -232,7 +232,7 @@ public class ZombieSpawner {
         if (level > 7) level = 7;
         if (Config.useBabies && nextInt(1, Config.babyZombieChance) == Config.babyZombieChance - 1) {
             if (Config.babiesAlwaysFast)
-                z.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 3));
+                z.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, Config.babySpeedLevel));
             z.setBaby(true);
         }
         z.setMaxHealth(r.nextInt(20) + (nextInt(10, 20) * level));
