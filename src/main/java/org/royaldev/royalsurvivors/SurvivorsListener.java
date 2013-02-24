@@ -92,7 +92,7 @@ public class SurvivorsListener implements Listener {
         p.setHealth(20);
         p.setWalkSpeed(.2F);
         p.setFlySpeed(.1F);
-        p.setMaxHealth(300);
+        p.setMaximumAir(300);
         p.setCanPickupItems(true);
     }
 
@@ -599,7 +599,7 @@ public class SurvivorsListener implements Listener {
         if (rr instanceof ShapedRecipe) {
             ShapedRecipe srr = (ShapedRecipe) rr;
             if (result.getType() == Material.BOW && !shapedRecipesMatch(srr, plugin.bowRecipe)) e.setCancelled(true);
-            if (Config.harderTorches && result.getType() == Material.TORCH && !srr.getIngredientMap().values().containsAll(plugin.torchRecipe.getIngredientList()))
+            if (Config.harderTorches && result.getType() == Material.TORCH && !srr.getIngredientMap().values().equals(plugin.torchRecipe.getIngredientList()))
                 e.setCancelled(true);
             if (result.getType() == Material.ARROW && !srr.getIngredientMap().values().containsAll(plugin.arrowRecipe.getIngredientList()))
                 e.setCancelled(true);
@@ -723,7 +723,7 @@ public class SurvivorsListener implements Listener {
         p.setBanned(true);
         PConfManager pcm = plugin.getUserdata(p);
         pcm.set("banned", true);
-        pcm.set("banexpiresafter", (Config.banLength < 0) ? 0L : (Config.banLength * 60 * 20) + new Date().getTime());
+        pcm.set("banexpiresafter", (Config.banLength < 0L) ? 0L : (Config.banLength * 60L * 20L) + new Date().getTime());
     }
 
     @EventHandler
@@ -859,7 +859,7 @@ public class SurvivorsListener implements Listener {
     }
 
     private Inventory shuffleInventory(Inventory i) {
-        List<Integer> unusedSlots = new ArrayList<Integer>();
+        final List<Integer> unusedSlots = new ArrayList<Integer>();
         for (int slot = 0; slot < i.getSize(); slot++) unusedSlots.add(slot);
         ItemStack[] contents = i.getContents().clone();
         i.clear();
