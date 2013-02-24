@@ -199,7 +199,7 @@ public class RoyalSurvivors extends JavaPlugin {
         im.setLore(Arrays.asList(ChatColor.GRAY + "Repairs items stored in it."));
         repairChest.setItemMeta(im);
         sr = new ShapedRecipe(repairChest);
-        sr.shape("III", "ICI", "III").setIngredient('I', Material.IRON_BLOCK).setIngredient('C', Material.CHEST);
+        sr.shape(" I ", "ICI", " I ").setIngredient('I', Material.IRON_BLOCK).setIngredient('C', Material.CHEST);
         getServer().addRecipe(sr);
     }
 
