@@ -24,7 +24,7 @@ public class RUtils {
      */
     public static String colorize(final String message) {
         if (message == null) return null;
-        return message.replaceAll("(?i)&([a-f0-9k-or])", "\u00a7$1");
+        return message.replaceAll("(?i)&([a-f0-9k-or])", ChatColor.COLOR_CHAR + "$1");
     }
 
     /**
