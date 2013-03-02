@@ -47,6 +47,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -622,30 +623,22 @@ public class SurvivorsListener implements Listener {
     }
 
     @EventHandler
-    public void onUseHealItem(PlayerInteractEvent e) {
-        if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_AIR) return;
+    public void onUseHealItem(PlayerItemConsumeEvent e) {
         final Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
-        final ItemStack hand = p.getItemInHand();
+        final ItemStack hand = e.getItem();
         if (hand.getType() != Material.MELON) return;
         if (hand.getDurability() != (short) 14) return;
-        if (p.getMaxHealth() == p.getHealth()) return; // don't waste heals
+        if (p.getMaxHealth() == p.getHealth() && p.getFoodLevel() >= 20) {
+            e.setCancelled(true); // don't waste medpacks - should never happen, though
+            return;
+        }
         int newHealth = p.getHealth() + 8;
         if (newHealth > p.getMaxHealth()) newHealth = p.getMaxHealth();
+        int newFood = p.getFoodLevel() + 8;
+        if (newFood > 20) newFood = 20;
         p.setHealth(newHealth);
-        // until Bukkit fixes removing the last item in interact events, workaround
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                for (int slot = 0; slot < p.getInventory().getSize(); slot++) {
-                    ItemStack is = p.getInventory().getItem(slot);
-                    if (is == null) continue;
-                    if (!is.equals(hand)) continue;
-                    is.setAmount(is.getAmount() - 1);
-                    p.getInventory().setItem(slot, is);
-                }
-            }
-        });
+        p.setFoodLevel(newFood);
     }
 
     @EventHandler
@@ -727,38 +720,25 @@ public class SurvivorsListener implements Listener {
     }
 
     @EventHandler
-    public void onDrinky(PlayerInteractEvent e) {
-        if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) return;
+    public void onDrinky(PlayerItemConsumeEvent e) {
         final Player p = e.getPlayer();
-        final ItemStack hand = p.getItemInHand();
+        final ItemStack hand = e.getItem();
         if (hand == null) return;
         if (hand.getType() != Material.POTION) return;
         if (hand.getDurability() != (short) 0) return;
         if (!isInInfectedWorld(p)) return;
-        //if (!p.isSneaking()) return;
         PConfManager pcm = plugin.getUserdata(p);
         float thirst = pcm.getFloat("thirst");
         if (!pcm.isSet("thirst")) thirst = 1F;
-        if (thirst >= 1F) return; // let's not waste water bottles
+        if (thirst >= 1F) {
+            e.setCancelled(true); // let's not waste water bottles
+            return;
+        }
         thirst += Config.thirstRestorePercent / 100F;
         if (thirst > 1F) thirst = 1F;
         pcm.set("thirst", thirst);
         pcm.set("thirstSaturation", (float) Config.thirstSaturationMax);
         p.setExp(thirst);
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                for (int slot = 0; slot < p.getInventory().getSize(); slot++) {
-                    ItemStack is = p.getInventory().getItem(slot);
-                    if (is == null) continue;
-                    if (!is.equals(hand)) continue;
-                    is.setAmount(is.getAmount() - 1);
-                    p.getInventory().setItem(slot, is);
-                    break;
-                }
-                p.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE));
-            }
-        });
     }
 
     @EventHandler
