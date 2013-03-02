@@ -790,6 +790,7 @@ public class SurvivorsListener implements Listener {
         if (from.getY() != to.getY() && !isOnLadder(p)) thirst -= Config.thirstJump;
         if (thirst <= 0F) {
             p.sendMessage(ChatColor.BLUE + "You have died of dehydration.");
+            p.setLastDamageCause(new EntityDamageEvent(p, EntityDamageEvent.DamageCause.CUSTOM, p.getHealth()));
             p.setHealth(0);
             p.setExp(1F);
             pcm.set("thirst", 1F);
@@ -866,7 +867,7 @@ public class SurvivorsListener implements Listener {
         for (ItemStack is : contents) {
             int slot = unusedSlots.get(r.nextInt(unusedSlots.size()));
             i.setItem(slot, is);
-            unusedSlots.remove(Integer.valueOf(slot));
+            unusedSlots.remove(slot);
         }
         return i;
     }
@@ -1041,6 +1042,6 @@ public class SurvivorsListener implements Listener {
     public void onChangeWorld(PlayerChangedWorldEvent e) {
         Player p = e.getPlayer();
         if (isInInfectedWorld(p)) setPlayerCharacteristics(p);
-        else resetPlayerCharacteristics(p);
+        else if (e.getFrom().getName().equalsIgnoreCase(Config.worldToUse)) resetPlayerCharacteristics(p);
     }
 }
