@@ -625,13 +625,27 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void onHealItemFullFood(PlayerInteractEvent e) {
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
-        Player p = e.getPlayer();
+        final Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
         if (p.getFoodLevel() < 20) return; // make them eat it normally
         final ItemStack hand = e.getItem();
+        if (hand == null) return;
         if (hand.getType() != Material.MELON) return;
         if (hand.getDurability() != (short) 14) return;
         onUseHealItem(new PlayerItemConsumeEvent(p, hand));
+        // until Bukkit fixes removing the last item in interact events, workaround
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                for (int slot = 0; slot < p.getInventory().getSize(); slot++) {
+                    ItemStack is = p.getInventory().getItem(slot);
+                    if (is == null) continue;
+                    if (!is.equals(hand)) continue;
+                    is.setAmount(is.getAmount() - 1);
+                    p.getInventory().setItem(slot, is);
+                }
+            }
+        });
     }
 
     @EventHandler
