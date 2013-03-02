@@ -187,7 +187,7 @@ public class RoyalSurvivors extends JavaPlugin {
         if (Config.harderTorches) {
             ItemStack torch = new ItemStack(Material.TORCH, 8);
             torchRecipe = new ShapelessRecipe(torch);
-            torchRecipe.addIngredient(Material.STICK).addIngredient(2, Material.COAL).addIngredient(Material.STICK);
+            torchRecipe.addIngredient(Material.STICK).addIngredient(Material.COAL).addIngredient(Material.FLINT);
             getServer().addRecipe(slr);
         }
         slr = new ShapelessRecipe(new ItemStack(Material.SLIME_BALL, 4));
@@ -199,7 +199,7 @@ public class RoyalSurvivors extends JavaPlugin {
         im.setLore(Arrays.asList(ChatColor.GRAY + "Repairs items stored in it."));
         repairChest.setItemMeta(im);
         sr = new ShapedRecipe(repairChest);
-        sr.shape(" I ", "ICI", " I ").setIngredient('I', Material.IRON_BLOCK).setIngredient('C', Material.CHEST);
+        sr.shape("RIR", "ICI", "RIR").setIngredient('I', Material.IRON_BLOCK).setIngredient('C', Material.CHEST).setIngredient('R', Material.REDSTONE);
         getServer().addRecipe(sr);
     }
 
