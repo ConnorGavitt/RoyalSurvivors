@@ -47,6 +47,7 @@ public class Config {
         harderTorches = c.getBoolean("gameplay.harder_torches.enabled");
         useSquidLoot = c.getBoolean("miscellaneous.squid_loot.enabled");
         canPickupItems = c.getBoolean("gameplay.player.can_pick_up_items");
+        checkVersion = c.getBoolean("miscellaneous.check_version");
 
         localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
         toxicRadius = c.getDouble("gameplay.zombies.toxicspray.radius");
@@ -169,6 +170,7 @@ public class Config {
     public static boolean harderTorches;
     public static boolean useSquidLoot;
     public static boolean canPickupItems;
+    public static boolean checkVersion;
 
     public static double localChatRadius;
     public static double toxicRadius;

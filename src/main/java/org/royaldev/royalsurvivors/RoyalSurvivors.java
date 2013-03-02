@@ -33,6 +33,8 @@ public class RoyalSurvivors extends JavaPlugin {
 
     public static File dataFolder;
 
+    private final int minVersion = 2636;
+
     public Config c;
     public ShapelessRecipe batteryRefill;
     public ShapelessRecipe waterBottle;
@@ -107,6 +109,24 @@ public class RoyalSurvivors extends JavaPlugin {
     public void debug(Object o) {
         if (!Config.debug) return;
         System.out.println("[" + getDescription().getName() + "] " + o);
+    }
+
+    private boolean versionCheck() {
+        if (!Config.checkVersion) return true;
+        Pattern p = Pattern.compile(".+b(\\d+)jnks.+");
+        Matcher m = p.matcher(getServer().getVersion());
+        if (!m.matches() || m.groupCount() < 1) {
+            getLogger().warning("[RoyalCommands] Could not get CraftBukkit version! No version checking will take place.");
+            return true;
+        }
+        Integer currentVersion;
+        try {
+            currentVersion = Integer.parseInt(m.group(1));
+        } catch (NumberFormatException e) {
+            getLogger().warning("[RoyalCommands] Could not get CraftBukkit version! No version checking will take place.");
+            return true;
+        }
+        return currentVersion == null || currentVersion >= minVersion;
     }
 
     private void addRecipes() {
@@ -205,6 +225,15 @@ public class RoyalSurvivors extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        if (!versionCheck()) {
+            getLogger().severe("This version of CraftBukkit is too old to run " + getDescription().getName() + ".");
+            getLogger().info(getDescription().getName() + " requires CB build >= " + minVersion + ".");
+            getLogger().info("Disabling plugin. This check can be turned off in the configuration.");
+            setEnabled(false);
+            return;
+        }
+
         instance = this;
 
         dataFolder = getDataFolder();
@@ -259,8 +288,12 @@ public class RoyalSurvivors extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (PConfManager pcm : pconfs.values()) pcm.forceSave();
-        for (ConfManager cm : confs.values()) cm.forceSave();
+        synchronized (pconfs) {
+            for (PConfManager pcm : pconfs.values()) pcm.forceSave();
+        }
+        synchronized (confs) {
+            for (ConfManager cm : confs.values()) cm.forceSave();
+        }
     }
 
 }

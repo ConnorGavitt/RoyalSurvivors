@@ -186,6 +186,9 @@ loot_chests:
 
 # Miscellaneous options
 miscellaneous:
+  # Check to see if the CraftBukkit server is recent enough to support the plugin? Note that other servers like Spigot
+  # and CraftBukkit++ (to name only few) will not work with this, so the check will be skipped.
+  check_version: true
   # Since squid are wooden boxes, you can enable squid to drop random loot on kill.
   squid_loot:
     # Enable squid loot?
