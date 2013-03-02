@@ -48,10 +48,7 @@ public class CmdRadio implements CommandExecutor {
                 if (isOn) {
                     p.sendMessage(ChatColor.BLUE + "You turn off your radio.");
                 } else {
-                    Object percent = pcm.get("radio.battery");
-                    if (percent == null) percent = "100";
-                    Integer percentage = Integer.valueOf(percent.toString());
-                    if (percentage == null) percentage = 100;
+                    int percentage = (pcm.isSet("radio.battery")) ? pcm.getInt("radio.battery") : 100;
                     if (percentage < 1 && Config.useRadioBattery) {
                         cs.sendMessage(ChatColor.BLUE + "You try to turn on your radio, but it seems to be out of battery.");
                         return true;

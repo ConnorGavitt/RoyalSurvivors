@@ -204,9 +204,7 @@ public class LootChest {
      */
     public List<ItemStack> getRandomLoot() {
         final List<ItemStack> random = new ArrayList<ItemStack>();
-        for (Loot l : getContents()) {
-            if (l.getChance() > r.nextInt(100)) random.add(l.getBase());
-        }
+        for (Loot l : getContents()) if (l.getChance() > r.nextInt(100)) random.add(l.getBase());
         return random;
     }
 

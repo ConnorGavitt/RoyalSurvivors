@@ -34,8 +34,7 @@ public class BatteryRunner implements Runnable {
     private int getRadioSlot(Player p) {
         for (int slot = 0; slot < p.getInventory().getSize(); slot++) {
             ItemStack is = p.getInventory().getItem(slot);
-            if (is == null) continue;
-            if (is.getType() != Config.radioMaterial) continue;
+            if (is == null || is.getType() != Config.radioMaterial) continue;
             return slot;
         }
         return -1;
@@ -48,8 +47,7 @@ public class BatteryRunner implements Runnable {
         if (w == null) return;
         for (Player p : w.getPlayers()) {
             PConfManager pcm = plugin.getUserdata(p);
-            if (!pcm.getBoolean("radio.on")) continue;
-            if (!hasRadio(p)) continue;
+            if (!pcm.getBoolean("radio.on") || !hasRadio(p)) continue;
             int slot = getRadioSlot(p);
             if (slot < 0) continue;
             ItemStack is = p.getInventory().getItem(slot);

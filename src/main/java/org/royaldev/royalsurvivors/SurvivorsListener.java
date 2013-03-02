@@ -78,6 +78,11 @@ public class SurvivorsListener implements Listener {
         plugin = instance;
     }
 
+    /**
+     * Sets player characteristics to custom-set characteristics in the configuration.
+     *
+     * @param p Player to set custom characteristics of
+     */
     private void setPlayerCharacteristics(Player p) {
         p.setHealth(Config.maxHealth);
         p.setMaxHealth(Config.maxHealth);
@@ -88,6 +93,11 @@ public class SurvivorsListener implements Listener {
         if (!Config.texturePackURL.isEmpty()) p.setTexturePack(Config.texturePackURL);
     }
 
+    /**
+     * Resets all characteristics of a player to the default Minecraft values.
+     *
+     * @param p Player to reset characteristics of
+     */
     private void resetPlayerCharacteristics(Player p) {
         p.setMaxHealth(20);
         p.setHealth(20);
@@ -199,25 +209,6 @@ public class SurvivorsListener implements Listener {
         e.setFormat(ChatColor.GRAY.toString() + ChatColor.ITALIC + "[RADIO] " + ChatColor.RESET + e.getPlayer().getName() + ": " + e.getMessage());
     }
 
-    /**
-     * Removes color codes that have not been processed yet (&char)
-     * <p/>
-     * This fixes a common exploit where color codes can be embedded into other codes:
-     * &&aa (replaces &a, and the other letters combine to make &a again)
-     *
-     * @param message String with raw color codes
-     * @return String without raw color codes
-     */
-    private String decolorize(String message) {
-        Pattern p = Pattern.compile("(?i)&[a-f0-9k-or]");
-        boolean contains = p.matcher(message).find();
-        while (contains) {
-            message = message.replaceAll("(?i)&[a-f0-9k-or]", "");
-            contains = p.matcher(message).find();
-        }
-        return message;
-    }
-
     @EventHandler
     public void banHandler(PlayerLoginEvent e) {
         Player p = e.getPlayer();
@@ -254,8 +245,7 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void firstRadio(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if (!isInInfectedWorld(p)) return;
-        if (p.hasPlayedBefore()) return;
+        if (!isInInfectedWorld(p) || p.hasPlayedBefore()) return;
         p.getInventory().addItem(new ItemStack(Config.radioMaterial, 1));
     }
 
@@ -263,8 +253,7 @@ public class SurvivorsListener implements Listener {
     public void phosphorousGrenades(ProjectileHitEvent e) {
         if (!Config.useGrenades) return;
         Projectile p = e.getEntity();
-        if (!isInInfectedWorld(p)) return;
-        if (!(p instanceof Snowball)) return;
+        if (!isInInfectedWorld(p) || !(p instanceof Snowball)) return;
         Location hit = p.getLocation();
         hit.getWorld().createExplosion(hit, 0F, false);
         List<Entity> toFire = p.getNearbyEntities(6D, 6D, 6D);
@@ -309,16 +298,14 @@ public class SurvivorsListener implements Listener {
 
     @EventHandler
     public void zombieMurdersRealFast(EntityDamageByEntityEvent e) {
-        if (!isInInfectedWorld(e.getDamager())) return;
-        if (!isInInfectedWorld(e.getEntity())) return;
+        if (!isInInfectedWorld(e.getDamager()) || !isInInfectedWorld(e.getEntity())) return;
         if (!(e.getDamager() instanceof Zombie)) return;
         e.setDamage(e.getDamage() * 5);
     }
 
     @EventHandler
     public void sniperRifleDamage(EntityDamageEvent e) {
-        if (!isInInfectedWorld(e.getEntity())) return;
-        if (e.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) return;
+        if (!isInInfectedWorld(e.getEntity()) || e.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) return;
         e.setDamage(e.getDamage() * 4);
     }
 
@@ -355,8 +342,7 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void fastFurnaceBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
-        if (!isInInfectedWorld(p)) return;
-        if (p.getGameMode() == GameMode.CREATIVE) return;
+        if (!isInInfectedWorld(p) || p.getGameMode() == GameMode.CREATIVE) return;
         Block b = e.getBlock();
         if (!(b.getState() instanceof Furnace)) return;
         Furnace f = (Furnace) b.getState();
@@ -370,8 +356,7 @@ public class SurvivorsListener implements Listener {
         e.getBlock().setType(Material.AIR);
         l.getWorld().dropItemNaturally(l, plugin.furnace);
         for (ItemStack is : drops) {
-            if (is == null) continue;
-            if (is.getType() == Material.FURNACE) continue;
+            if (is == null || is.getType() == Material.FURNACE) continue;
             l.getWorld().dropItemNaturally(l, is);
         }
     }
@@ -381,16 +366,13 @@ public class SurvivorsListener implements Listener {
         Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
         ItemStack hand = e.getItemInHand();
-        if (hand == null) return;
-        if (hand.getType() != Material.FURNACE) return;
+        if (hand == null || hand.getType() != Material.FURNACE) return;
         ItemMeta him = hand.getItemMeta();
         ItemMeta fim = plugin.furnace.getItemMeta();
         String hdn = him.getDisplayName();
-        if (hdn == null) return;
-        if (!hdn.equals(fim.getDisplayName())) return;
+        if (hdn == null || !hdn.equals(fim.getDisplayName())) return;
         List<String> hl = him.getLore();
-        if (hl == null) return;
-        if (!hl.containsAll(fim.getLore())) return;
+        if (hl == null || !hl.containsAll(fim.getLore())) return;
         Block b = e.getBlockPlaced();
         if (!(b.getState() instanceof Furnace)) return;
         Furnace f = (Furnace) b.getState();
@@ -495,8 +477,7 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void stopAllCommands(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
-        if (!isInInfectedWorld(p)) return;
-        if (p.hasPermission("rsurv.allowcommands")) return;
+        if (!isInInfectedWorld(p) || p.hasPermission("rsurv.allowcommands")) return;
         String[] split = e.getMessage().split(" ");
         if (split.length < 1) return;
         String root = split[0].substring(1); // the command label (remove /)
@@ -518,7 +499,7 @@ public class SurvivorsListener implements Listener {
         if (!isInInfectedWorld(p)) return;
         PConfManager pcm = plugin.getUserdata(p);
         boolean isOn = pcm.getBoolean("radio.on", false);
-        e.setMessage(decolorize(e.getMessage()));
+        e.setMessage(RUtils.decolorize(e.getMessage()));
         List<Player> toRemove = new ArrayList<Player>();
         for (Player t : e.getRecipients()) {
             if (isInInfectedWorld(t)) continue;
@@ -559,8 +540,7 @@ public class SurvivorsListener implements Listener {
 
     @EventHandler
     public void zombiesAreNotVampires(EntityCombustEvent e) {
-        if (!isInInfectedWorld(e.getEntity())) return;
-        if (e.getEntityType() != EntityType.ZOMBIE) return;
+        if (!isInInfectedWorld(e.getEntity()) || e.getEntityType() != EntityType.ZOMBIE) return;
         e.setCancelled(true);
     }
 
@@ -568,8 +548,7 @@ public class SurvivorsListener implements Listener {
     public void onRefillBattery(CraftItemEvent e) {
         if (!(e.getWhoClicked() instanceof Player)) return;
         Player p = (Player) e.getWhoClicked();
-        if (!(isInInfectedWorld(p))) return;
-        if (!(e.getRecipe() instanceof ShapelessRecipe)) return;
+        if (!(isInInfectedWorld(p)) || !(e.getRecipe() instanceof ShapelessRecipe)) return;
         ShapelessRecipe slr = (ShapelessRecipe) e.getRecipe();
         if (!shapelessRecipesMatch(slr, plugin.batteryRefill)) return;
         plugin.getUserdata(p).set("radio.battery", 100);
@@ -626,12 +605,9 @@ public class SurvivorsListener implements Listener {
     public void onHealItemFullFood(PlayerInteractEvent e) {
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
         final Player p = e.getPlayer();
-        if (!isInInfectedWorld(p)) return;
-        if (p.getFoodLevel() < 20) return; // make them eat it normally
+        if (!isInInfectedWorld(p) || p.getFoodLevel() < 20) return;
         final ItemStack hand = e.getItem();
-        if (hand == null) return;
-        if (hand.getType() != Material.MELON) return;
-        if (hand.getDurability() != (short) 14) return;
+        if (hand == null || hand.getType() != Material.MELON || hand.getDurability() != (short) 14) return;
         onUseHealItem(new PlayerItemConsumeEvent(p, hand));
         // until Bukkit fixes removing the last item in interact events, workaround
         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
@@ -653,15 +629,14 @@ public class SurvivorsListener implements Listener {
         final Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
         final ItemStack hand = e.getItem();
-        if (hand.getType() != Material.MELON) return;
-        if (hand.getDurability() != (short) 14) return;
-        if (p.getMaxHealth() == p.getHealth()) {
+        if (hand.getType() != Material.MELON || hand.getDurability() != (short) 14) return;
+        if (p.getMaxHealth() == p.getHealth() && p.getFoodLevel() >= 20) {
             e.setCancelled(true); // don't waste medpacks - should never happen, though
             return;
         }
         int newHealth = p.getHealth() + 8;
-        if (newHealth > p.getMaxHealth()) newHealth = p.getMaxHealth();
         int newFood = p.getFoodLevel() + 8;
+        if (newHealth > p.getMaxHealth()) newHealth = p.getMaxHealth();
         if (newFood > 20) newFood = 20;
         p.setHealth(newHealth);
         p.setFoodLevel(newFood);
@@ -729,16 +704,14 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void removeBullets(ProjectileHitEvent e) {
         Entity ent = e.getEntity();
-        if (!isInInfectedWorld(ent)) return;
-        if (!(ent instanceof Arrow)) return;
+        if (!isInInfectedWorld(ent) || !(ent instanceof Arrow)) return;
         ent.remove();
     }
 
     @EventHandler
     public void hardcore(PlayerDeathEvent e) {
         Player p = e.getEntity();
-        if (!isInInfectedWorld(p)) return;
-        if (!Config.banOnDeath) return;
+        if (!isInInfectedWorld(p) || !Config.banOnDeath) return;
         p.setBanned(true);
         PConfManager pcm = plugin.getUserdata(p);
         pcm.set("banned", true);
@@ -749,10 +722,8 @@ public class SurvivorsListener implements Listener {
     public void onDrinky(PlayerItemConsumeEvent e) {
         final Player p = e.getPlayer();
         final ItemStack hand = e.getItem();
-        if (hand == null) return;
-        if (hand.getType() != Material.POTION) return;
-        if (hand.getDurability() != (short) 0) return;
-        if (!isInInfectedWorld(p)) return;
+        if (hand == null || hand.getType() != Material.POTION || hand.getDurability() != (short) 0 || !isInInfectedWorld(p))
+            return;
         PConfManager pcm = plugin.getUserdata(p);
         float thirst = pcm.getFloat("thirst");
         if (!pcm.isSet("thirst")) thirst = 1F;
@@ -770,8 +741,7 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void oohYouTouchMyTaLaLa(PlayerMoveEvent e) {
         Player p = e.getPlayer();
-        if (!isInInfectedWorld(p)) return;
-        if (p.getGameMode() == GameMode.CREATIVE) return;
+        if (!isInInfectedWorld(p) || p.getGameMode() == GameMode.CREATIVE) return;
         Location from = e.getFrom();
         Location to = e.getTo();
         if (from.getX() == to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ()) return; // looking around
@@ -810,8 +780,7 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void deathChestBreak(BlockBreakEvent e) {
         Block b = e.getBlock();
-        if (!isInInfectedWorld(b.getLocation())) return;
-        if (!(b.getState() instanceof Chest)) return;
+        if (!isInInfectedWorld(b.getLocation()) || !(b.getState() instanceof Chest)) return;
         ConfManager cm = plugin.getConfig("otherdata.yml");
         Location l = b.getLocation();
         String path = "deathchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
@@ -835,16 +804,13 @@ public class SurvivorsListener implements Listener {
         final Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
         final ItemStack hand = p.getItemInHand();
-        if (hand.getType() != Material.INK_SACK) return;
-        if (hand.getDurability() != (short) 4) return;
+        if (hand.getType() != Material.INK_SACK || hand.getDurability() != (short) 4) return;
         ItemMeta him = hand.getItemMeta();
-        ItemMeta fim = plugin.toxicspray.getItemMeta();
+        ItemMeta fim = plugin.toxicSpray.getItemMeta();
         String hdn = him.getDisplayName();
-        if (hdn == null) return;
-        if (!hdn.equals(fim.getDisplayName())) return;
+        if (hdn == null || !hdn.equals(fim.getDisplayName())) return;
         List<String> hl = him.getLore();
-        if (hl == null) return;
-        if (!hl.containsAll(fim.getLore())) return;
+        if (hl == null || !hl.containsAll(fim.getLore())) return;
         PConfManager pcm = plugin.getUserdata(p);
         if (pcm.getBoolean("toxicspray_on", false)) return; // don't waste toxicsprays
         pcm.set("toxicspray_on", true);
@@ -982,16 +948,13 @@ public class SurvivorsListener implements Listener {
         Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
         ItemStack hand = e.getItemInHand();
-        if (hand == null) return;
-        if (hand.getType() != Material.CHEST) return;
+        if (hand == null || hand.getType() != Material.CHEST) return;
         ItemMeta him = hand.getItemMeta();
         ItemMeta fim = plugin.repairChest.getItemMeta();
         String hdn = him.getDisplayName();
-        if (hdn == null) return;
-        if (!hdn.equals(fim.getDisplayName())) return;
+        if (hdn == null || !hdn.equals(fim.getDisplayName())) return;
         List<String> hl = him.getLore();
-        if (hl == null) return;
-        if (!hl.containsAll(fim.getLore())) return;
+        if (hl == null || !hl.containsAll(fim.getLore())) return;
         Block b = e.getBlockPlaced();
         if (!(b.getState() instanceof Chest)) return;
         Chest c = (Chest) b.getState();
@@ -1015,25 +978,21 @@ public class SurvivorsListener implements Listener {
         e.getBlock().setType(Material.AIR);
         l.getWorld().dropItemNaturally(l, plugin.repairChest);
         for (ItemStack is : drops) {
-            if (is == null) continue;
-            if (is.getType() == Material.CHEST) continue;
+            if (is == null || is.getType() == Material.CHEST) continue;
             l.getWorld().dropItemNaturally(l, is);
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void squidLoot(EntityDamageByEntityEvent e) {
-        if (!Config.useSquidLoot) return;
-        if (r.nextInt(100) > Config.squidLootChance) return;
-        if (!(e.getDamager() instanceof Player)) return;
+        if (!Config.useSquidLoot || r.nextInt(100) > Config.squidLootChance || !(e.getDamager() instanceof Player))
+            return;
         Player p = (Player) e.getDamager();
         Entity ent = e.getEntity();
         if (!(ent instanceof Squid)) return;
         Squid squid = (Squid) ent;
-        if (squid.isDead()) return;
-        if (squid.getHealth() <= 0) return;
-        if (squid.getHealth() - e.getDamage() > 0) return;
-        if (!isInInfectedWorld(squid) || !isInInfectedWorld(p)) return;
+        if (squid.isDead() || squid.getHealth() <= 0 || squid.getHealth() - e.getDamage() > 0 || !isInInfectedWorld(squid) || !isInInfectedWorld(p))
+            return;
         List<String> lootSets = Config.squidLootSets;
         if (lootSets.isEmpty()) return;
         String lootSet = lootSets.get(r.nextInt(lootSets.size()));

@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 
 public class RoyalSurvivors extends JavaPlugin {
 
+    // TODO: Radio block?
+
     public static File dataFolder;
 
     private final int minVersion = 2636;
@@ -45,7 +47,7 @@ public class RoyalSurvivors extends JavaPlugin {
     public ItemStack recharge;
     public ItemStack arrow;
     public ItemStack furnace;
-    public ItemStack toxicspray;
+    public ItemStack toxicSpray;
     public ItemStack repairChest;
 
     public static RoyalSurvivors instance;
@@ -54,6 +56,11 @@ public class RoyalSurvivors extends JavaPlugin {
     public final Map<String, ConfManager> confs = new HashMap<String, ConfManager>();
 
     private final Pattern versionPattern = Pattern.compile("(\\d+\\.\\d+\\.\\d+)(\\-SNAPSHOT)?(\\-local\\-(\\d{8}\\.\\d{6})|\\-(\\d+))?");
+
+    public RoyalSurvivors() {
+        super();
+        instance = this;
+    }
 
     /**
      * Registers a command in the server. If the command isn't defined in plugin.yml
@@ -103,7 +110,7 @@ public class RoyalSurvivors extends JavaPlugin {
 
     public static void debugStatic(Object o) {
         if (!Config.debug) return;
-        System.out.println("[RoyalSurvivors] " + o);
+        System.out.println("[" + RoyalSurvivors.instance.getDescription().getName() + "] " + o);
     }
 
     public void debug(Object o) {
@@ -116,20 +123,20 @@ public class RoyalSurvivors extends JavaPlugin {
         Pattern p = Pattern.compile(".+b(\\d+)jnks.+");
         Matcher m = p.matcher(getServer().getVersion());
         if (!m.matches() || m.groupCount() < 1) {
-            getLogger().warning("[RoyalCommands] Could not get CraftBukkit version! No version checking will take place.");
+            getLogger().warning("Could not get CraftBukkit version! No version checking will take place.");
             return true;
         }
         Integer currentVersion;
         try {
             currentVersion = Integer.parseInt(m.group(1));
         } catch (NumberFormatException e) {
-            getLogger().warning("[RoyalCommands] Could not get CraftBukkit version! No version checking will take place.");
+            getLogger().warning("Could not get CraftBukkit version! No version checking will take place.");
             return true;
         }
         return currentVersion == null || currentVersion >= minVersion;
     }
 
-    private void addRecipes() {
+    private void addAllRecipes() {
         ItemStack bow = new ItemStack(Material.BOW, 1);
         ItemMeta im = bow.getItemMeta();
         im.setDisplayName(ChatColor.RESET + "M24 Sniper Rifle");
@@ -196,12 +203,12 @@ public class RoyalSurvivors extends JavaPlugin {
         ShapedRecipe sr = new ShapedRecipe(furnace);
         sr.shape("RRR", "RFR", "RRR").setIngredient('R', Material.REDSTONE).setIngredient('F', Material.FURNACE);
         getServer().addRecipe(sr);
-        toxicspray = new ItemStack(Material.INK_SACK, 1, (short) 4);
-        im = toxicspray.getItemMeta();
+        toxicSpray = new ItemStack(Material.INK_SACK, 1, (short) 4);
+        im = toxicSpray.getItemMeta();
         im.setDisplayName(ChatColor.RESET + "Toxic Zombie Spray");
         im.setLore(Arrays.asList(ChatColor.GRAY + "Damages all zombies fatally around the wearer."));
-        toxicspray.setItemMeta(im);
-        slr = new ShapelessRecipe(toxicspray);
+        toxicSpray.setItemMeta(im);
+        slr = new ShapelessRecipe(toxicSpray);
         slr.addIngredient(Material.INK_SACK, 4).addIngredient(Material.TORCH);
         getServer().addRecipe(slr);
         if (Config.harderTorches) {
@@ -234,8 +241,6 @@ public class RoyalSurvivors extends JavaPlugin {
             return;
         }
 
-        instance = this;
-
         dataFolder = getDataFolder();
 
         c = new Config(this);
@@ -253,7 +258,7 @@ public class RoyalSurvivors extends JavaPlugin {
         if (Config.deathChestRemoveInterval > 0L)
             bs.runTaskTimer(this, new DeathChestRemover(this), 0L, Config.deathChestRemoveInterval * 60L * 20L);
 
-        addRecipes();
+        addAllRecipes();
 
         registerCommand(new CmdRadio(this), "radio", this);
         registerCommand(new CmdSurvivors(this), "survivors", this);
