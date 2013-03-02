@@ -776,7 +776,7 @@ public class SurvivorsListener implements Listener {
             if (p.isSprinting()) saturation -= Config.thirstSprint;
             else if (p.isSneaking()) saturation -= Config.thirstSneak;
             else saturation -= Config.thirstWalk;
-            if (from.getY() != to.getY() && !isOnLadder(p)) saturation -= Config.thirstJump;
+            if (to.getY() > from.getY() && !isOnLadder(p)) saturation -= Config.thirstJump;
             pcm.set("thirstSaturation", saturation);
             return;
         }
@@ -787,7 +787,7 @@ public class SurvivorsListener implements Listener {
         else if (p.isSneaking()) thirst -= Config.thirstSneak;
         else thirst -= Config.thirstWalk;
         // jump check (disregard ladders)
-        if (from.getY() != to.getY() && !isOnLadder(p)) thirst -= Config.thirstJump;
+        if (to.getY() > from.getY() && !isOnLadder(p)) thirst -= Config.thirstJump;
         if (thirst <= 0F) {
             p.sendMessage(ChatColor.BLUE + "You have died of dehydration.");
             p.setLastDamageCause(new EntityDamageEvent(p, EntityDamageEvent.DamageCause.CUSTOM, p.getHealth()));
