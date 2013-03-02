@@ -14,7 +14,7 @@ public class Config {
         plugin = instance;
         File config = new File(plugin.getDataFolder(), "config.yml");
         if (!config.exists()) {
-            config.getParentFile().mkdirs();
+            if (!config.getParentFile().mkdirs()) plugin.getLogger().warning("Could not create config.yml directory.");
             plugin.saveDefaultConfig();
         }
         reloadConfig();
@@ -78,6 +78,12 @@ public class Config {
         thirstSneak = c.getInt("gameplay.thirst.drain.sneak");
         thirstJump = c.getInt("gameplay.thirst.drain.jump");
         thirstFire = c.getInt("gameplay.thirst.drain.fire");
+        thirstBreak = c.getInt("gameplay.thirst.drain.break");
+        thirstPlace = c.getInt("gameplay.thirst.drain.place");
+        thirstDamage = c.getInt("gameplay.thirst.drain.damage");
+        thirstTakeDamage = c.getInt("gameplay.thirst.drain.take_damage");
+        thirstSwing = c.getInt("gameplay.thirst.drain.swing");
+        thirstSwingItem = c.getInt("gameplay.thirst.drain.swing_item");
         thirstMax = c.getInt("gameplay.thirst.drain.max");
         thirstSaturationMax = c.getInt("gameplay.thirst.saturation.max");
         thirstRestorePercent = c.getInt("gameplay.thirst.restore.amount");
@@ -193,6 +199,12 @@ public class Config {
     public static int thirstSneak;
     public static int thirstJump;
     public static int thirstFire;
+    public static int thirstPlace;
+    public static int thirstBreak;
+    public static int thirstDamage;
+    public static int thirstTakeDamage;
+    public static int thirstSwing;
+    public static int thirstSwingItem;
     public static int thirstMax;
     public static int thirstSaturationMax;
     public static int thirstRestorePercent;

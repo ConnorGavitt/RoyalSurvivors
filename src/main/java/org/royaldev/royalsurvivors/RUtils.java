@@ -1,7 +1,11 @@
 package org.royaldev.royalsurvivors;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import java.util.regex.Pattern;
 
@@ -44,6 +48,22 @@ public class RUtils {
             contains = p.matcher(message).find();
         }
         return message;
+    }
+
+    public static boolean isInInfectedWorld(Entity e) {
+        return e.getWorld().getName().equalsIgnoreCase(Config.worldToUse);
+    }
+
+    public static boolean isInInfectedWorld(Location l) {
+        return l.getWorld().getName().equalsIgnoreCase(Config.worldToUse);
+    }
+
+    public static boolean isOnLadder(Location l) {
+        return l.getBlock().getType() == Material.LADDER;
+    }
+
+    public static boolean isOnLadder(Player p) {
+        return isOnLadder(p.getLocation());
     }
 
 }

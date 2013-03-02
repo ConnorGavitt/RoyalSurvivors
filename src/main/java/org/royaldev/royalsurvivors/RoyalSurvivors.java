@@ -247,6 +247,7 @@ public class RoyalSurvivors extends JavaPlugin {
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new SurvivorsListener(this), this);
+        pm.registerEvents(new ThirstListener(this), this);
 
         BukkitScheduler bs = getServer().getScheduler();
         bs.runTaskTimer(this, new BatteryRunner(this), Config.batteryDrainInterval * 60L * 20L, Config.batteryDrainInterval * 60L * 20L);
