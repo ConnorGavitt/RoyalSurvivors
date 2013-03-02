@@ -34,6 +34,10 @@ public class ThirstListener implements Listener {
      * @param amount Amount to change thirst by (can be negative) - out of thirstMax
      */
     private void changeThirst(final Player p, final float amount) {
+        if (getSaturation(p) > 0F) {
+            changeSaturation(p, amount);
+            return;
+        }
         PConfManager pcm = plugin.getUserdata(p);
         if (!pcm.exists()) pcm.createFile();
         float thirst = (pcm.isSet("thirst")) ? pcm.getFloat("thirst") : 1F;
@@ -42,6 +46,18 @@ public class ThirstListener implements Listener {
         thirst /= Config.thirstMax;
         pcm.set("thirst", thirst);
         p.setExp(thirst);
+    }
+
+    private float getSaturation(final Player p) {
+        PConfManager pcm = plugin.getUserdata(p);
+        if (!pcm.exists()) pcm.createFile();
+        return (pcm.isSet("thirstSaturation")) ? pcm.getFloat("thirstSaturation") : (float) Config.thirstSaturationMax;
+    }
+
+    private void changeSaturation(final Player p, final float amount) {
+        PConfManager pcm = plugin.getUserdata(p);
+        if (!pcm.exists()) pcm.createFile();
+        pcm.set("thirstSaturation", getSaturation(p) + amount);
     }
 
     @EventHandler
