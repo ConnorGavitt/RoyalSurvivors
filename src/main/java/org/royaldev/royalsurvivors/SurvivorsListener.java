@@ -623,13 +623,25 @@ public class SurvivorsListener implements Listener {
     }
 
     @EventHandler
+    public void onHealItemFullFood(PlayerInteractEvent e) {
+        if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
+        Player p = e.getPlayer();
+        if (!isInInfectedWorld(p)) return;
+        if (p.getFoodLevel() < 20) return; // make them eat it normally
+        final ItemStack hand = e.getItem();
+        if (hand.getType() != Material.MELON) return;
+        if (hand.getDurability() != (short) 14) return;
+        onUseHealItem(new PlayerItemConsumeEvent(p, hand));
+    }
+
+    @EventHandler
     public void onUseHealItem(PlayerItemConsumeEvent e) {
         final Player p = e.getPlayer();
         if (!isInInfectedWorld(p)) return;
         final ItemStack hand = e.getItem();
         if (hand.getType() != Material.MELON) return;
         if (hand.getDurability() != (short) 14) return;
-        if (p.getMaxHealth() == p.getHealth() && p.getFoodLevel() >= 20) {
+        if (p.getMaxHealth() == p.getHealth()) {
             e.setCancelled(true); // don't waste medpacks - should never happen, though
             return;
         }
