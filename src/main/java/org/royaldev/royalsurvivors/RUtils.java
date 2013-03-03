@@ -1,10 +1,13 @@
 package org.royaldev.royalsurvivors;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.regex.Pattern;
@@ -64,6 +67,28 @@ public class RUtils {
 
     public static boolean isOnLadder(Player p) {
         return isOnLadder(p.getLocation());
+    }
+
+    private static final Material[] noShade = new Material[]{
+            Material.FENCE,
+            Material.FENCE_GATE,
+            Material.GLASS,
+            Material.ICE,
+            Material.IRON_FENCE,
+            Material.LADDER,
+            Material.NETHER_FENCE,
+            Material.STONE_BUTTON,
+            Material.THIN_GLASS,
+            Material.WEB,
+            Material.WOOD_BUTTON
+    };
+
+    public static boolean isInShade(Entity e) {
+        Location l = (e instanceof LivingEntity) ? ((LivingEntity) e).getEyeLocation() : e.getLocation();
+        Block b = l.getWorld().getHighestBlockAt(l);
+        boolean providesShade = !ArrayUtils.contains(noShade, b.getType());
+        boolean isAbovePlayer = l.getY() < b.getY();
+        return providesShade && isAbovePlayer;
     }
 
 }
