@@ -44,19 +44,19 @@ gameplay:
       # Amount of thirst to drain in addition to other amounts if jumping
       jump: 1
       # Amount of thirst to drain if on fire
-      fire: 10
+      fire: 1500
       # Amount of thirst to drain on block place
-      place: 1
+      place: 100
       # Amount of thirst to drain on block break
-      break: 1
+      break: 150
       # Amount of thirst to drain on hurting other entities (PvP, PvE, etc.)
-      damage: 2
+      damage: 100
       # Amount of thirst to drain on being hurt by other entities
-      take_damage: 1
+      take_damage: 200
       # Amount of thirst to drain on swinging empty arm
-      swing: 1
+      swing: 100
       # Amount of thirst to drain on swinging arm with item in hand
-      swing_item: 2
+      swing_item: 150
     # Options relating to thirst restore
     restore:
       # How much thirst (in % of XP bar) to restore after drinking a water bottle
