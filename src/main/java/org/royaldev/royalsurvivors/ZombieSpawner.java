@@ -22,7 +22,7 @@ import java.util.Random;
 public class ZombieSpawner {
 
     private enum EquipmentType {
-        HELM, CHESTPLATE, LEGGINGS, BOOTS, WEAPON, BOW
+        BOOTS, BOW, CHESTPLATE, HELM, LEGGINGS, WEAPON
     }
 
     private static final Object spawnLock = new Object();
@@ -83,15 +83,15 @@ public class ZombieSpawner {
     }
 
     private static PotionEffectType[] allowedEffects = new PotionEffectType[]{
+            PotionEffectType.DAMAGE_RESISTANCE,
             PotionEffectType.FIRE_RESISTANCE,
-            PotionEffectType.WEAKNESS,
-            PotionEffectType.SPEED,
-            PotionEffectType.SLOW,
-            PotionEffectType.REGENERATION,
-            PotionEffectType.JUMP,
-            PotionEffectType.INVISIBILITY,
             PotionEffectType.INCREASE_DAMAGE,
-            PotionEffectType.DAMAGE_RESISTANCE
+            PotionEffectType.INVISIBILITY,
+            PotionEffectType.JUMP,
+            PotionEffectType.REGENERATION,
+            PotionEffectType.SLOW,
+            PotionEffectType.SPEED,
+            PotionEffectType.WEAKNESS
     };
 
     /**
