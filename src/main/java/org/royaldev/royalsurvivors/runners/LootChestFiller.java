@@ -15,7 +15,6 @@ import org.royaldev.royalsurvivors.LootChest;
 import org.royaldev.royalsurvivors.RoyalSurvivors;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -89,10 +88,10 @@ public class LootChestFiller implements Runnable {
                 }
                 if (!noPlayers) continue;
             }
-            if (!cs.isSet(key + ".emptiedat")) cs.set(key + ".emptiedat", new Date().getTime());
+            if (!cs.isSet(key + ".emptiedat")) cs.set(key + ".emptiedat", System.currentTimeMillis());
             long emptiedAt = cs.getLong(key + ".emptiedat");
             long refill = cs.getInt(key + ".refill") * 60000L; // minutes to milliseconds
-            if (emptiedAt + refill > new Date().getTime()) continue; // if it's not refill time, yet
+            if (emptiedAt + refill > System.currentTimeMillis()) continue; // if it's not refill time, yet
             final LootChest lc = LootChest.getLootChest(cs.getString(key + ".loot_chest"));
             if (lc == null) continue;
             c.getInventory().clear();

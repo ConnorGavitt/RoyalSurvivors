@@ -10,7 +10,6 @@ import org.royaldev.royalsurvivors.Config;
 import org.royaldev.royalsurvivors.PConfManager;
 import org.royaldev.royalsurvivors.RoyalSurvivors;
 
-import java.util.Date;
 import java.util.List;
 
 public class ZombieSpray implements Runnable {
@@ -29,7 +28,7 @@ public class ZombieSpray implements Runnable {
         for (Player p : w.getPlayers()) {
             PConfManager pcm = plugin.getUserdata(p);
             if (!pcm.getBoolean("toxicspray_on", false)) continue;
-            if (pcm.getLong("toxicspray_expire", 0L) <= new Date().getTime()) {
+            if (pcm.getLong("toxicspray_expire", 0L) <= System.currentTimeMillis()) {
                 pcm.set("toxicspray_on", false);
                 pcm.set("toxicspray_expire", null);
                 p.sendMessage(ChatColor.BLUE + "The toxic fumes wear off.");

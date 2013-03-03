@@ -200,7 +200,7 @@ public class SurvivorsListener implements Listener {
         long banExpiresAfter = pcm.getLong("banexpiresafter");
         if (!banned || banExpiresAfter <= 0L) return;
         // if time now is after the time ban should expire
-        if (new Date().getTime() > banExpiresAfter) {
+        if (System.currentTimeMillis() > banExpiresAfter) {
             p.setBanned(false);
             e.setResult(PlayerLoginEvent.Result.ALLOWED);
             pcm.set("banned", false);
@@ -687,7 +687,7 @@ public class SurvivorsListener implements Listener {
         p.setBanned(true);
         PConfManager pcm = plugin.getUserdata(p);
         pcm.set("banned", true);
-        pcm.set("banexpiresafter", (Config.banLength < 0L) ? 0L : (Config.banLength * 60L * 20L) + new Date().getTime());
+        pcm.set("banexpiresafter", (Config.banLength < 0L) ? 0L : (Config.banLength * 60L * 20L) + System.currentTimeMillis());
     }
 
     @EventHandler
@@ -727,7 +727,7 @@ public class SurvivorsListener implements Listener {
         PConfManager pcm = plugin.getUserdata(p);
         if (pcm.getBoolean("toxicspray_on", false)) return; // don't waste toxicsprays
         pcm.set("toxicspray_on", true);
-        pcm.set("toxicspray_expire", new Date().getTime() + (Config.toxicDuration * 1000));
+        pcm.set("toxicspray_expire", System.currentTimeMillis() + (Config.toxicDuration * 1000));
         // until Bukkit fixes removing the last item in interact events, workaround
         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
             @Override
