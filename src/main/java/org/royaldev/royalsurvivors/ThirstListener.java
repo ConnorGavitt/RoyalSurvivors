@@ -131,7 +131,8 @@ public class ThirstListener implements Listener {
         else thirst -= Config.thirstWalk;
         Biome b = p.getLocation().getBlock().getBiome();
         long time = p.getWorld().getTime();
-        if ((b == Biome.DESERT || b == Biome.DESERT_HILLS) && (time > 0L && time < 12000L))
+        int y = to.getWorld().getHighestBlockYAt(to);
+        if ((b == Biome.DESERT || b == Biome.DESERT_HILLS) && (time > 0L && time < 12000L) && y < p.getEyeLocation().getY())
             thirst -= Config.thirstDesert;
         // jump check (disregard ladders)
         if (to.getY() > from.getY() && !RUtils.isOnLadder(p)) thirst -= Config.thirstJump;
