@@ -47,15 +47,13 @@ public class BatteryRunner implements Runnable {
         if (w == null) return;
         for (Player p : w.getPlayers()) {
             PConfManager pcm = plugin.getUserdata(p);
-            if (!pcm.getBoolean("radio.on") || !hasRadio(p)) continue;
+            if (!pcm.getBoolean("radio.on", false)) continue;
+            if (!hasRadio(p)) continue;
             int slot = getRadioSlot(p);
             if (slot < 0) continue;
             ItemStack is = p.getInventory().getItem(slot);
             ItemMeta im = is.getItemMeta();
-            Object percent = pcm.get("radio.battery");
-            if (percent == null) percent = "100";
-            Integer percentage = Integer.valueOf(percent.toString());
-            if (percentage == null) percentage = 100;
+            int percentage = pcm.getInt("radio.battery", 100);
             if (percentage < 1) continue; // :(
             percentage -= Config.batteryDrainAmount;
             if (percentage < 1) {

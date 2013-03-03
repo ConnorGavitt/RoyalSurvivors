@@ -42,8 +42,7 @@ public class CmdRadio implements CommandExecutor {
                 return true;
             }
             PConfManager pcm = plugin.getUserdata(p);
-            Boolean isOn = pcm.getBoolean("radio.on");
-            if (isOn == null) isOn = false;
+            boolean isOn = pcm.getBoolean("radio.on", false);
             if (args.length < 1) {
                 if (isOn) {
                     p.sendMessage(ChatColor.BLUE + "You turn off your radio.");
