@@ -41,7 +41,7 @@ public class Config {
         useGrenades = c.getBoolean("gameplay.grenades.enabled");
         useBabies = c.getBoolean("gameplay.zombies.babies.enabled");
         babiesAlwaysFast = c.getBoolean("gameplay.zombies.babies.always_fast");
-        toxicEnabled = c.getBoolean("gameplay.zombies.toxicSpray.enabled");
+        toxicEnabled = c.getBoolean("gameplay.zombies.toxicspray.enabled");
         allowLootChestBreak = c.getBoolean("loot_chests.allow_chest_break");
         refillIfNotEmpty = c.getBoolean("loot_chests.refill.if_not_empty");
         harderTorches = c.getBoolean("gameplay.harder_torches.enabled");
@@ -50,7 +50,7 @@ public class Config {
         checkVersion = c.getBoolean("miscellaneous.check_version");
 
         localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
-        toxicRadius = c.getDouble("gameplay.zombies.toxicSpray.radius");
+        toxicRadius = c.getDouble("gameplay.zombies.toxicspray.radius");
         lootChestRadius = c.getDouble("loot_chests.refill.radius");
 
         try {
@@ -95,8 +95,8 @@ public class Config {
         grenadeLowBurn = c.getInt("gameplay.grenades.low_burn_time");
         babyZombieChance = c.getInt("gameplay.zombies.babies.chance_out_of");
         userdataSaveInterval = c.getInt("saving.save_interval");
-        toxicInterval = c.getInt("gameplay.zombies.toxicSpray.interval");
-        toxicDuration = c.getInt("gameplay.zombies.toxicSpray.duration");
+        toxicInterval = c.getInt("gameplay.zombies.toxicspray.interval");
+        toxicDuration = c.getInt("gameplay.zombies.toxicspray.duration");
         repairChestRepairAmount = c.getInt("miscellaneous.repair_chests.repair_amount");
         squidLootChance = c.getInt("miscellaneous.squid_loot.chance");
         maxHealth = c.getInt("gameplay.player.max_health");
