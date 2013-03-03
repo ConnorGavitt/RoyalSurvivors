@@ -63,7 +63,7 @@ public class RoyalSurvivors extends JavaPlugin {
     }
 
     /**
-     * Registers a command in the server. If the command isn't defined in plugin.yml
+     * Registers a command in the server. If the command isn't defined in plugin.yml,
      * the NPE is caught, and a warning line is sent to the console.
      *
      * @param ce      CommandExecutor to be registered

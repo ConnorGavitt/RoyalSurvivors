@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -128,6 +129,10 @@ public class ThirstListener implements Listener {
         if (p.isSprinting()) thirst -= Config.thirstSprint;
         else if (p.isSneaking()) thirst -= Config.thirstSneak;
         else thirst -= Config.thirstWalk;
+        Biome b = p.getLocation().getBlock().getBiome();
+        long time = p.getWorld().getTime();
+        if ((b == Biome.DESERT || b == Biome.DESERT_HILLS) && (time > 0L && time < 12000L))
+            thirst -= Config.thirstDesert;
         // jump check (disregard ladders)
         if (to.getY() > from.getY() && !RUtils.isOnLadder(p)) thirst -= Config.thirstJump;
         if (thirst <= 0F) {
@@ -146,8 +151,8 @@ public class ThirstListener implements Listener {
     @EventHandler
     public void thirstFire(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player)) return;
-        if (e.getCause() != EntityDamageEvent.DamageCause.FIRE) return;
-        if (e.getCause() != EntityDamageEvent.DamageCause.FIRE_TICK) return;
+        if (e.getCause() != EntityDamageEvent.DamageCause.FIRE && e.getCause() != EntityDamageEvent.DamageCause.FIRE_TICK)
+            return;
         Player p = (Player) e.getEntity();
         if (!RUtils.isInInfectedWorld(p)) return;
         changeThirst(p, -Config.thirstFire); // remove thirst amount (must be negative)

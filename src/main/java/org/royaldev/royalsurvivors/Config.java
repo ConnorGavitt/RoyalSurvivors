@@ -84,6 +84,7 @@ public class Config {
         thirstTakeDamage = c.getInt("gameplay.thirst.drain.take_damage");
         thirstSwing = c.getInt("gameplay.thirst.drain.swing");
         thirstSwingItem = c.getInt("gameplay.thirst.drain.swing_item");
+        thirstDesert = c.getInt("gameplay.thirst.drain.desert");
         thirstMax = c.getInt("gameplay.thirst.drain.max");
         thirstSaturationMax = c.getInt("gameplay.thirst.saturation.max");
         thirstRestorePercent = c.getInt("gameplay.thirst.restore.amount");
@@ -205,6 +206,7 @@ public class Config {
     public static int thirstTakeDamage;
     public static int thirstSwing;
     public static int thirstSwingItem;
+    public static int thirstDesert;
     public static int thirstMax;
     public static int thirstSaturationMax;
     public static int thirstRestorePercent;
