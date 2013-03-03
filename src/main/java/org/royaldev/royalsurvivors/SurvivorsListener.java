@@ -62,7 +62,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -897,15 +896,17 @@ public class SurvivorsListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void squidLoot(EntityDamageByEntityEvent e) {
-        if (!Config.useSquidLoot || r.nextInt(100) > Config.squidLootChance || !(e.getDamager() instanceof Player))
-            return;
-        Player p = (Player) e.getDamager();
+    public void squidLoot(EntityDeathEvent e) {
+        EntityDamageEvent ede = e.getEntity().getLastDamageCause();
+        if (!(ede instanceof EntityDamageByEntityEvent)) return;
+        EntityDamageByEntityEvent edbee = (EntityDamageByEntityEvent) ede;
+        Entity damager = edbee.getDamager();
+        if (!Config.useSquidLoot || r.nextInt(100) > Config.squidLootChance || !(damager instanceof Player)) return;
+        Player p = (Player) damager;
         Entity ent = e.getEntity();
         if (!(ent instanceof Squid)) return;
         Squid squid = (Squid) ent;
-        if (squid.isDead() || squid.getHealth() <= 0 || squid.getHealth() - e.getDamage() > 0 || !RUtils.isInInfectedWorld(squid) || !RUtils.isInInfectedWorld(p))
-            return;
+        if (!RUtils.isInInfectedWorld(squid) || !RUtils.isInInfectedWorld(p)) return;
         List<String> lootSets = Config.squidLootSets;
         if (lootSets.isEmpty()) return;
         String lootSet = lootSets.get(r.nextInt(lootSets.size()));
@@ -921,5 +922,20 @@ public class SurvivorsListener implements Listener {
         Player p = e.getPlayer();
         if (RUtils.isInInfectedWorld(p)) setPlayerCharacteristics(p);
         else if (e.getFrom().getName().equalsIgnoreCase(Config.worldToUse)) resetPlayerCharacteristics(p);
+    }
+
+    @EventHandler
+    public void onBreakMelonBlock(BlockBreakEvent e) { // drop empty medpacks
+        Player p = e.getPlayer();
+        Block b = e.getBlock();
+        if (b == null || b.getType() != Material.MELON_BLOCK) return;
+        Location l = b.getLocation();
+        if (!RUtils.isInInfectedWorld(p) || !RUtils.isInInfectedWorld(l)) return;
+        e.setCancelled(true);
+        ItemStack hand = p.getItemInHand();
+        int amount = (hand == null) ? b.getDrops().size() : b.getDrops(hand).size();
+        b.setType(Material.AIR);
+        l.getWorld().dropItemNaturally(l, plugin.furnace);
+        for (int i = 0; i < amount; i++) l.getWorld().dropItemNaturally(l, plugin.emptyMedpack);
     }
 }

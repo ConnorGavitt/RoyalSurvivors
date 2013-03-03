@@ -49,6 +49,7 @@ public class RoyalSurvivors extends JavaPlugin {
     public ItemStack furnace;
     public ItemStack toxicSpray;
     public ItemStack repairChest;
+    public ItemStack emptyMedpack;
 
     public static RoyalSurvivors instance;
 
@@ -137,8 +138,13 @@ public class RoyalSurvivors extends JavaPlugin {
     }
 
     private void addAllRecipes() {
+        emptyMedpack = new ItemStack(Material.MELON, 1, (short) 13);
+        ItemMeta im = emptyMedpack.getItemMeta();
+        im.setDisplayName(ChatColor.RESET + "Empty Medpack");
+        im.setLore(Arrays.asList(ChatColor.GRAY + "The shell of a medpack."));
+        emptyMedpack.setItemMeta(im);
         ItemStack bow = new ItemStack(Material.BOW, 1);
-        ItemMeta im = bow.getItemMeta();
+        im = bow.getItemMeta();
         im.setDisplayName(ChatColor.RESET + "M24 Sniper Rifle");
         im.setLore(Arrays.asList(ChatColor.GRAY + "Uses .308 Caliber Rounds."));
         bow.setItemMeta(im);
@@ -228,6 +234,9 @@ public class RoyalSurvivors extends JavaPlugin {
         sr = new ShapedRecipe(repairChest);
         sr.shape("RIR", "ICI", "RIR").setIngredient('I', Material.IRON_BLOCK).setIngredient('C', Material.CHEST).setIngredient('R', Material.REDSTONE);
         getServer().addRecipe(sr);
+        slr = new ShapelessRecipe(medpack);
+        slr.addIngredient(Material.MELON, (short) 13).addIngredient(Material.INK_SACK, (short) 2);
+        getServer().addRecipe(slr);
     }
 
     @Override
