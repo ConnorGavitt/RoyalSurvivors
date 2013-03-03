@@ -935,7 +935,6 @@ public class SurvivorsListener implements Listener {
         ItemStack hand = p.getItemInHand();
         int amount = (hand == null) ? b.getDrops().size() : b.getDrops(hand).size();
         b.setType(Material.AIR);
-        l.getWorld().dropItemNaturally(l, plugin.furnace);
         for (int i = 0; i < amount; i++) l.getWorld().dropItemNaturally(l, plugin.emptyMedpack);
     }
 }
