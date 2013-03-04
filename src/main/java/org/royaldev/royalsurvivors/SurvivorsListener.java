@@ -485,6 +485,7 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void zombieIsMasterRace(CreatureSpawnEvent e) {
         if (!RUtils.isInInfectedWorld(e.getEntity())) return;
+        if (Config.ignoredSpawnReasons.contains(e.getSpawnReason().name())) return;
         if (e.getEntityType() == EntityType.ZOMBIE) { // don't force spawn zombies when they're spawning already!
             ZombieSpawner.applyZombieCharacteristics((Zombie) e.getEntity(), r.nextInt(8));
             return;
@@ -579,6 +580,7 @@ public class SurvivorsListener implements Listener {
         if (!RUtils.isInInfectedWorld(p) || p.getFoodLevel() < 20) return;
         final ItemStack hand = e.getItem();
         if (hand == null || hand.getType() != Material.MELON || hand.getDurability() != (short) 14) return;
+        if (p.getHealth() >= p.getMaxHealth() && p.getFoodLevel() >= 20) return; // don't waste
         onUseHealItem(new PlayerItemConsumeEvent(p, hand));
         // until Bukkit fixes removing the last item in interact events, workaround
         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {

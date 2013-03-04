@@ -20,7 +20,7 @@ gameplay:
     can_pick_up_items: true
   # Options relating to harder torches
   harder_torches:
-    # Enable harder torches? Torches will require one flint, two coal, and one stick.
+    # Enable harder torches? Torches will require one flint, one coal, and one stick.
     enabled: false
   # Options relating to thirst (cannot be disabled)
   thirst:
@@ -203,6 +203,12 @@ miscellaneous:
   # Check to see if the CraftBukkit server is recent enough to support the plugin? Note that other servers like Spigot
   # and CraftBukkit++ (to name only few) will not work with this, so the check will be skipped.
   check_version: true
+  # Spawn reasons to ignore - RoyalSurvivors will not override mobs that spawn with these reasons.
+  # CUSTOM is anything spawned by another plugin.
+  # All reasons available here:
+  # http://jd.bukkit.org/rb/apidocs/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html
+  ignored_spawn_reasons:
+  - CUSTOM
   # Since squid are wooden boxes, you can enable squid to drop random loot on kill.
   squid_loot:
     # Enable squid loot?

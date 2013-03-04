@@ -106,6 +106,7 @@ public class Config {
 
         allowedCommands = c.getStringList("miscellaneous.allowed_commands");
         squidLootSets = c.getStringList("miscellaneous.squid_loot.loot_sets");
+        ignoredSpawnReasons = c.getStringList("miscellaneous.ignored_spawn_reasons");
 
         if (maxHealth < 1) maxHealth = 1;
         if (maxAir < 0) maxAir = 0;
@@ -234,5 +235,6 @@ public class Config {
 
     public static List<String> allowedCommands;
     public static List<String> squidLootSets;
+    public static List<String> ignoredSpawnReasons;
 
 }
