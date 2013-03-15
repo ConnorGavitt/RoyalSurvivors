@@ -1,4 +1,4 @@
-package org.royaldev.royalsurvivors;
+package org.royaldev.royalsurvivors.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -19,6 +19,10 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.royaldev.royalsurvivors.Config;
+import org.royaldev.royalsurvivors.PConfManager;
+import org.royaldev.royalsurvivors.RUtils;
+import org.royaldev.royalsurvivors.RoyalSurvivors;
 
 public class ThirstListener implements Listener {
 

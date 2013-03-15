@@ -1,4 +1,4 @@
-package org.royaldev.royalsurvivors;
+package org.royaldev.royalsurvivors.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -59,6 +59,12 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.royaldev.royalsurvivors.ConfManager;
+import org.royaldev.royalsurvivors.Config;
+import org.royaldev.royalsurvivors.LootChest;
+import org.royaldev.royalsurvivors.PConfManager;
+import org.royaldev.royalsurvivors.RUtils;
+import org.royaldev.royalsurvivors.RoyalSurvivors;
 
 import java.util.ArrayList;
 import java.util.Collection;
