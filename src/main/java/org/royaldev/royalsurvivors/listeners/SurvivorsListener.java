@@ -49,7 +49,6 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -65,6 +64,7 @@ import org.royaldev.royalsurvivors.LootChest;
 import org.royaldev.royalsurvivors.PConfManager;
 import org.royaldev.royalsurvivors.RUtils;
 import org.royaldev.royalsurvivors.RoyalSurvivors;
+import org.royaldev.royalsurvivors.ZombieSpawner;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -209,7 +209,7 @@ public class SurvivorsListener implements Listener {
             p.setBanned(false);
             e.setResult(PlayerLoginEvent.Result.ALLOWED);
             pcm.set("banned", false);
-            pcm.set(null, "banexpiresafter");
+            pcm.set("banexpiresafter", null);
             return;
         }
         e.setResult(PlayerLoginEvent.Result.KICK_BANNED);
@@ -269,7 +269,6 @@ public class SurvivorsListener implements Listener {
             pcm.set("thirst", thirst);
         }
         p.setExp(thirst);
-        p.setLevel(0);
     }
 
     @EventHandler
@@ -566,20 +565,6 @@ public class SurvivorsListener implements Listener {
     }
 
     @EventHandler
-    public void onChangeLevel(PlayerLevelChangeEvent e) {
-        Player p = e.getPlayer();
-        if (!(RUtils.isInInfectedWorld(p))) return;
-        p.setLevel(0);
-        PConfManager pcm = plugin.getUserdata(p);
-        float thirst = pcm.getFloat("thirst");
-        if (!pcm.isSet("thirst")) {
-            thirst = 1F;
-            pcm.set("thirst", thirst);
-        }
-        p.setExp(thirst);
-    }
-
-    @EventHandler
     public void onHealItemFullFood(PlayerInteractEvent e) {
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
         final Player p = e.getPlayer();
@@ -674,7 +659,9 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void destroyBlock(BlockBreakEvent e) {
         if (!Config.useGrenades) return;
-        Material m = e.getBlock().getType();
+        Block b = e.getBlock();
+        if (!RUtils.isInInfectedWorld(b.getLocation())) return;
+        Material m = b.getType();
         if (m != Material.SNOW && m != Material.SNOW_BLOCK) return;
         e.setCancelled(true); // let's cancel so no drops
         e.getBlock().setType(Material.AIR); // still have it go away
