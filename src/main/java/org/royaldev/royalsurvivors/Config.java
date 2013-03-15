@@ -48,6 +48,7 @@ public class Config {
         useSquidLoot = c.getBoolean("miscellaneous.squid_loot.enabled");
         canPickupItems = c.getBoolean("gameplay.player.can_pick_up_items");
         checkVersion = c.getBoolean("miscellaneous.check_version");
+        coldEnabled = c.getBoolean("gameplay.cold.enabled");
 
         localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
         toxicRadius = c.getDouble("gameplay.zombies.toxicspray.radius");
@@ -88,6 +89,10 @@ public class Config {
         thirstMax = c.getInt("gameplay.thirst.drain.max");
         thirstSaturationMax = c.getInt("gameplay.thirst.saturation.max");
         thirstRestorePercent = c.getInt("gameplay.thirst.restore.amount");
+        coldMax = c.getInt("gameplay.cold.max");
+        coldDrain = c.getInt("gameplay.cold.drain_amount");
+        coldDrainInterval = c.getInt("gameplay.cold.drain_interval");
+        coldSaturationMax = c.getInt("gameplay.cold.warmth.max");
         speedBoostLevel = c.getInt("gameplay.zombies.speed.level");
         gpsUpdateInterval = c.getInt("gameplay.gps_update_interval");
         grenadeHighDamage = c.getInt("gameplay.grenades.high_damage");
@@ -179,6 +184,7 @@ public class Config {
     public static boolean useSquidLoot;
     public static boolean canPickupItems;
     public static boolean checkVersion;
+    public static boolean coldEnabled;
 
     public static double localChatRadius;
     public static double toxicRadius;
@@ -211,6 +217,10 @@ public class Config {
     public static int thirstMax;
     public static int thirstSaturationMax;
     public static int thirstRestorePercent;
+    public static int coldMax;
+    public static int coldDrain;
+    public static int coldDrainInterval;
+    public static int coldSaturationMax;
     public static int speedBoostLevel;
     public static int gpsUpdateInterval;
     public static int grenadeHighDamage;

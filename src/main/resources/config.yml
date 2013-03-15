@@ -22,6 +22,21 @@ gameplay:
   harder_torches:
     # Enable harder torches? Torches will require one flint, one coal, and one stick.
     enabled: false
+  # Options relating to cold
+  cold:
+    # Enable cold?
+    enabled: true
+    # Max amount of heat - if this hits 0, the player freezes
+    max: 100000
+    # Amount to drain from max
+    drain_amount: 5
+    # How often to drain from max in ticks (1/20 of a second)
+    drain_interval: 15
+    warmth:
+      # This is analogous to thirst saturation. To figure out how long this would take to drain,
+      # solve 0 = max - (drain_amount * x / drain_interval) The answer will be in ticks.
+      # Default (1000) takes 150 seconds to drain.
+      max: 1000
   # Options relating to thirst (cannot be disabled)
   thirst:
     # Options relating to saturation drain
@@ -209,6 +224,13 @@ miscellaneous:
   # http://jd.bukkit.org/rb/apidocs/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html
   ignored_spawn_reasons:
   - CUSTOM
+  - BREEDING
+  - BUILD_IRONGOLEM
+  - BUILD_SNOWMAN
+  - BUILD_WITHER
+  - EGG
+  - LIGHTNING
+  - SPAWNER_EGG
   # Since squid are wooden boxes, you can enable squid to drop random loot on kill.
   squid_loot:
     # Enable squid loot?
