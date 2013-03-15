@@ -14,7 +14,10 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.royaldev.royalsurvivors.commands.CmdGPS;
 import org.royaldev.royalsurvivors.commands.CmdRadio;
 import org.royaldev.royalsurvivors.commands.CmdSurvivors;
+import org.royaldev.royalsurvivors.listeners.SurvivorsListener;
+import org.royaldev.royalsurvivors.listeners.ThirstListener;
 import org.royaldev.royalsurvivors.runners.BatteryRunner;
+import org.royaldev.royalsurvivors.runners.ColdRunner;
 import org.royaldev.royalsurvivors.runners.CompassUpdater;
 import org.royaldev.royalsurvivors.runners.DeathChestRemover;
 import org.royaldev.royalsurvivors.runners.LootChestFiller;
@@ -32,6 +35,8 @@ import java.util.regex.Pattern;
 public class RoyalSurvivors extends JavaPlugin {
 
     // TODO: Radio block?
+    // TODO: Cold - must wear armor/be near fire in winter biomes, or walk speed goes down until death
+    // TODO: Detection
 
     public static File dataFolder;
 
@@ -220,7 +225,7 @@ public class RoyalSurvivors extends JavaPlugin {
         if (Config.harderTorches) {
             ItemStack torch = new ItemStack(Material.TORCH, 8);
             torchRecipe = new ShapelessRecipe(torch);
-            torchRecipe.addIngredient(Material.STICK).addIngredient(Material.COAL).addIngredient(Material.FLINT);
+            torchRecipe.addIngredient(Material.STICK).addIngredient(Material.COAL, -1).addIngredient(Material.FLINT);
             getServer().addRecipe(slr);
         }
         slr = new ShapelessRecipe(new ItemStack(Material.SLIME_BALL, 4));
@@ -264,6 +269,7 @@ public class RoyalSurvivors extends JavaPlugin {
         bs.runTaskTimer(this, new ZombieSpray(this), 20L, Config.toxicInterval);
         bs.runTaskTimer(this, new LootChestFiller(this), 20L, 200L);
         bs.runTaskTimer(this, new RepairChestRunner(this), 20L, Config.repairChestRunInterval);
+        bs.runTaskTimer(this, new ColdRunner(this), 20L, Config.coldDrainInterval);
         bs.runTaskTimerAsynchronously(this, new UserdataSaver(this), 20L, Config.userdataSaveInterval * 60L * 20L);
         if (Config.deathChestRemoveInterval > 0L)
             bs.runTaskTimer(this, new DeathChestRemover(this), 0L, Config.deathChestRemoveInterval * 60L * 20L);

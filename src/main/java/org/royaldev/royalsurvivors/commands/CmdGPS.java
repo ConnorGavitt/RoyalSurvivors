@@ -28,10 +28,6 @@ public class CmdGPS implements CommandExecutor {
         return p.getInventory().contains(Material.COMPASS);
     }
 
-    /*
-    TODO: Add coordinate pointing
-     */
-
     // Map<Requester, List<Requests>>
     private final Map<String, List<String>> linkRequests = new HashMap<String, List<String>>();
 

@@ -1,6 +1,8 @@
 = RoyalSurvivors
 
-RoyalSurvivors is a hardcore, fast-paced, zombie-based survival plugin. Features:
+RoyalSurvivors is a hardcore, fast-paced, zombie-based survival plugin.
+
+Features:
 
  * Players must manage health, hunger, and thirst.
  * A radio must be used to be heard by people further than 15 (configurable) blocks away. The radio can be configured to use a battery, as well.
