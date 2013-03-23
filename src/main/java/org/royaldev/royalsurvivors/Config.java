@@ -28,6 +28,7 @@ public class Config {
         radioBattery = c.getString("gameplay.radio.battery.item");
         banMessage = c.getString("gameplay.death.ban.message");
         texturePackURL = c.getString("gameplay.player.texture_pack_url").trim();
+        nameplateFormat = c.getString("gameplay.zombies.nameplates.format");
 
         banOnDeath = c.getBoolean("gameplay.death.ban.enabled");
         deathChest = c.getBoolean("gameplay.death.drops_to_chest");
@@ -49,6 +50,8 @@ public class Config {
         canPickupItems = c.getBoolean("gameplay.player.can_pick_up_items");
         checkVersion = c.getBoolean("miscellaneous.check_version");
         coldEnabled = c.getBoolean("gameplay.cold.enabled");
+        useNameplates = c.getBoolean("gameplay.zombies.nameplates.enabled");
+        nameplateAlwaysVisible = c.getBoolean("gameplay.zombies.nameplates.visible_from_range");
 
         localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
         toxicRadius = c.getDouble("gameplay.zombies.toxicspray.radius");
@@ -164,6 +167,7 @@ public class Config {
     public static String radioBattery;
     public static String banMessage;
     public static String texturePackURL;
+    public static String nameplateFormat;
 
     public static boolean banOnDeath;
     public static boolean deathChest;
@@ -185,6 +189,8 @@ public class Config {
     public static boolean canPickupItems;
     public static boolean checkVersion;
     public static boolean coldEnabled;
+    public static boolean useNameplates;
+    public static boolean nameplateAlwaysVisible;
 
     public static double localChatRadius;
     public static double toxicRadius;

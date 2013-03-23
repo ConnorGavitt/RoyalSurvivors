@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -227,6 +229,56 @@ public class ZombieSpawner {
         return spawnLeveledZombie(l, r.nextInt(8));
     }
 
+    /**
+     * Attempts to guess the level of a zombie based off of its health.
+     *
+     * @param health Health (in half hearts) of zombie
+     * @return Guessed level
+     */
+    public static int guessLevel(int health) {
+        health -= r.nextInt(20);
+        health /= nextInt(10, 20);
+        return health;
+    }
+
+    public static void applyNameplate(Zombie z, int level, int currentHealth, int maxHealth) {
+        if (!Config.useNameplates) return;
+        if (level < 1) level = 1;
+        if (level > 7) level = 7;
+        String format = Config.nameplateFormat;
+        format = format.replace("{currenthealth}", String.valueOf(currentHealth));
+        format = format.replace("{maxhealth}", String.valueOf(maxHealth));
+        format = format.replace("{currenthearts}", String.valueOf(currentHealth / 2D));
+        format = format.replace("{maxhearts}", String.valueOf(maxHealth / 2D));
+        format = format.replace("{level}", String.valueOf(level));
+        if (format.length() > 32) format = format.substring(0, 32);
+        z.setCustomName(format);
+        z.setCustomNameVisible(Config.nameplateAlwaysVisible);
+    }
+
+    public static void applyNameplate(Zombie z, int level) {
+        applyNameplate(z, level, z.getHealth(), z.getMaxHealth());
+    }
+
+    /**
+     * Gets the metadata RoyalSurvivors stores on a zombie at spawn in a Map format.
+     *
+     * @param z Zombie to get metadata of
+     * @return Map of objects or null if no metadata
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> getSurvivorsData(Zombie z) {
+        final List<MetadataValue> metadata = z.getMetadata("rsurv");
+        for (MetadataValue mv : metadata) {
+            if (mv == null) continue;
+            if (!mv.getOwningPlugin().getName().equals(RoyalSurvivors.instance.getName())) continue;
+            Object value = mv.value();
+            if (!(value instanceof Map)) continue;
+            return (Map<String, Object>) value;
+        }
+        return null;
+    }
+
     public static void applyZombieCharacteristics(Zombie z, int level) {
         if (level < 1) level = 1;
         if (level > 7) level = 7;
@@ -242,6 +294,10 @@ public class ZombieSpawner {
             if (nextInt(1, Config.potionChance) == Config.potionChance - 1) applyPotionEffects(z);
         if (Config.useSpeed)
             z.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, Config.speedBoostLevel));
+        if (Config.useNameplates) applyNameplate(z, level);
+        final Map<String, Object> info = new HashMap<String, Object>();
+        info.put("level", level);
+        z.setMetadata("rsurv", new FixedMetadataValue(RoyalSurvivors.instance, info));
     }
 
     /**

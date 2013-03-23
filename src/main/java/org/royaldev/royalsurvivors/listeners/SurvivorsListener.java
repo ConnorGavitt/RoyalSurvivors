@@ -58,6 +58,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.royaldev.royalsurvivors.ConfManager;
 import org.royaldev.royalsurvivors.Config;
 import org.royaldev.royalsurvivors.LootChest;
@@ -68,7 +69,9 @@ import org.royaldev.royalsurvivors.ZombieSpawner;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -931,5 +934,31 @@ public class SurvivorsListener implements Listener {
         int amount = (hand == null) ? b.getDrops().size() : b.getDrops(hand).size();
         b.setType(Material.AIR);
         for (int i = 0; i < amount; i++) l.getWorld().dropItemNaturally(l, plugin.emptyMedpack);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onZombieDamage(EntityDamageEvent e) {
+        if (!Config.useNameplates) return;
+        Entity ent = e.getEntity();
+        if (ent.getType() != EntityType.ZOMBIE) return;
+        if (!RUtils.isInInfectedWorld(ent)) return;
+        final Zombie z = (Zombie) ent;
+        Map<String, Object> data = ZombieSpawner.getSurvivorsData(z);
+        if (data == null) {
+            final Map<String, Object> info = new HashMap<String, Object>();
+            info.put("level", ZombieSpawner.guessLevel(z.getMaxHealth()));
+            z.setMetadata("rsurv", new FixedMetadataValue(RoyalSurvivors.instance, info));
+            data = info;
+        }
+        Object o = data.get("level");
+        if (!(o instanceof Number)) return;
+        final Number n = (Number) o;
+        // schedule task because entity damage calcs not done in event
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                ZombieSpawner.applyNameplate(z, n.intValue(), z.getHealth(), z.getMaxHealth());
+            }
+        });
     }
 }

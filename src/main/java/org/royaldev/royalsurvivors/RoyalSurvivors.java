@@ -40,7 +40,7 @@ public class RoyalSurvivors extends JavaPlugin {
 
     public static File dataFolder;
 
-    private final int minVersion = 2636;
+    private final int minVersion = 2645;
 
     public Config c;
     public ShapelessRecipe batteryRefill;

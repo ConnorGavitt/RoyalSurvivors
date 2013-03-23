@@ -80,6 +80,17 @@ gameplay:
       amount: 20
   # Options that affect the way zombies work
   zombies:
+    # Options pertaining to zombie nameplates
+    nameplates:
+      # Enable zombie nameplates?
+      enabled: true
+      # Make nameplates always visible or only when close?
+      visible_from_range: false
+      # Sets the format of zombie nameplates. Variables must be surrounded by {} and be lowercase. List of variables:
+      # * level - The level of the zombie
+      # * currenthearts/maxhearts - Current or maximum amount of HEARTS (each heart is two half-hearts/health)
+      # * currenthealth/maxhealth - Current or maximum amount of HEALTH (half a heart)
+      format: "Lv{level} - {currenthearts}/{maxhearts}"
     # Ocean zombies spawn where squid should spawn. This makes it harder for survivors in the ocean to live.
     enable_ocean_zombies: false
     # Toxic spray will deal half damage to all zombies in a set radius around a player that uses it for a duration set
