@@ -1,8 +1,11 @@
 package org.royaldev.royalsurvivors.runners;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.royaldev.royalsurvivors.Config;
 import org.royaldev.royalsurvivors.PConfManager;
@@ -30,6 +33,35 @@ public class ColdRunner implements Runnable {
         return ArrayUtils.contains(coldBiomes, b);
     }
 
+    private boolean isWarmBlock(Material m) {
+        return Config.warmBlocks.contains(m.name());
+    }
+
+    /**
+     * Returns the number of warm blocks around the player. This should be multiplied against the warm amount.
+     *
+     * @param p Player to get warm strength of
+     * @return Number of warm blocks
+     */
+    private int getWarmStrength(Player p) {
+        final Location l = p.getLocation();
+        final int lX = l.getBlockX();
+        final int lY = l.getBlockY();
+        final int lZ = l.getBlockZ();
+        int strength = 0;
+        int radius = (Config.coldHotBlockRadius < 0) ? Config.coldHotBlockRadius * -1 : Config.coldHotBlockRadius;
+        for (int x = -radius; x < radius; x++) {
+            for (int y = -radius; y < radius; y++) {
+                for (int z = -radius; z < radius; z++) {
+                    Block b = p.getWorld().getBlockAt(x + lX, y + lY, z + lZ);
+                    if (!isWarmBlock(b.getType())) continue;
+                    strength++;
+                }
+            }
+        }
+        return strength;
+    }
+
     /**
      * Changes a player's cold by a set amount.
      *
@@ -44,10 +76,16 @@ public class ColdRunner implements Runnable {
         PConfManager pcm = plugin.getUserdata(p);
         if (!pcm.exists()) pcm.createFile();
         float cold = (pcm.isSet("cold")) ? pcm.getFloat("cold") : (float) Config.coldMax;
+        System.out.println("1: " + cold);
         cold *= Config.coldMax;
+        System.out.println("2: " + cold);
         cold += amount;
-        cold /= Config.coldMax;
-        pcm.set("cold", cold);
+        System.out.println("3: " + cold);
+        cold = .2F * (cold / Config.coldMax);
+        System.out.println("4: " + cold);
+        if (cold <= 0F) cold = 0F;
+        if (cold >= .2F) cold = .2F;
+        pcm.set("cold", cold / .2F);
         p.setWalkSpeed(cold);
     }
 
@@ -82,7 +120,15 @@ public class ColdRunner implements Runnable {
         if (w == null) return;
         for (Player p : w.getPlayers()) {
             if (!isInColdBiome(p)) continue;
-            changeCold(p, -Config.coldDrain);
+            int warmStrength = getWarmStrength(p);
+            System.out.println("warmStrength: " + warmStrength);
+            int drainAmount = (warmStrength > 0) ? Config.coldRestore * warmStrength : -Config.coldDrain;
+            changeCold(p, drainAmount);
+            if (p.getWalkSpeed() <= 0F) {
+                p.setHealth(0);
+                changeCold(p, Config.coldMax);
+                changeWarmth(p, Config.coldSaturationMax);
+            }
         }
     }
 

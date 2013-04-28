@@ -96,6 +96,8 @@ public class Config {
         coldDrain = c.getInt("gameplay.cold.drain_amount");
         coldDrainInterval = c.getInt("gameplay.cold.drain_interval");
         coldSaturationMax = c.getInt("gameplay.cold.warmth.max");
+        coldHotBlockRadius = c.getInt("gameplay.cold.warm_radius");
+        coldRestore = c.getInt("gameplay.cold.restore_amount");
         speedBoostLevel = c.getInt("gameplay.zombies.speed.level");
         gpsUpdateInterval = c.getInt("gameplay.gps_update_interval");
         grenadeHighDamage = c.getInt("gameplay.grenades.high_damage");
@@ -115,6 +117,7 @@ public class Config {
         allowedCommands = c.getStringList("miscellaneous.allowed_commands");
         squidLootSets = c.getStringList("miscellaneous.squid_loot.loot_sets");
         ignoredSpawnReasons = c.getStringList("miscellaneous.ignored_spawn_reasons");
+        warmBlocks = c.getStringList("gameplay.cold.warm_blocks");
 
         if (maxHealth < 1) maxHealth = 1;
         if (maxAir < 0) maxAir = 0;
@@ -227,6 +230,8 @@ public class Config {
     public static int coldDrain;
     public static int coldDrainInterval;
     public static int coldSaturationMax;
+    public static int coldHotBlockRadius;
+    public static int coldRestore;
     public static int speedBoostLevel;
     public static int gpsUpdateInterval;
     public static int grenadeHighDamage;
@@ -252,5 +257,6 @@ public class Config {
     public static List<String> allowedCommands;
     public static List<String> squidLootSets;
     public static List<String> ignoredSpawnReasons;
+    public static List<String> warmBlocks;
 
 }

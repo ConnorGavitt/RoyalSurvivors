@@ -27,14 +27,25 @@ gameplay:
     # Enable cold?
     enabled: true
     # Max amount of heat - if this hits 0, the player freezes
-    max: 100000
+    # Default is 4000 - 10 minutes
+    # To customize exactly, use formulas:
+    # 0 = max - ((drain_amount * x)/drain_interval) : This determines how long it will take to deplete in ticks
+    # 0 = x - ((drain_amount * ticks_to_last)/drain_interval) : This determines the amount to make max if given an
+    # amount of time to last in ticks
+    max: 4000
+    warm_blocks:
+    - TORCH
+    - FIRE
+    # The radius a warm block must be from a player to warm them up
+    warm_radius: 5
     # Amount to drain from max
     drain_amount: 5
     # How often to drain from max in ticks (1/20 of a second)
     drain_interval: 15
+    # Amount to warm a player up
+    restore_amount: 5
     warmth:
       # This is analogous to thirst saturation. To figure out how long this would take to drain,
-      # solve 0 = max - (drain_amount * x / drain_interval) The answer will be in ticks.
       # Default (1000) takes 150 seconds to drain.
       max: 1000
   # Options relating to thirst (cannot be disabled)
