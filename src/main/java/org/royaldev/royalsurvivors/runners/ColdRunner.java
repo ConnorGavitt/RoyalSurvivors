@@ -1,6 +1,7 @@
 package org.royaldev.royalsurvivors.runners;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -124,6 +125,7 @@ public class ColdRunner implements Runnable {
             int drainAmount = (warmStrength > 0) ? Config.coldRestore * warmStrength : -Config.coldDrain;
             changeCold(p, drainAmount);
             if (p.getWalkSpeed() <= 0F) {
+                p.sendMessage(ChatColor.BLUE + "You have died by freezing.");
                 p.setHealth(0);
                 changeCold(p, Config.coldMax);
                 changeWarmth(p, Config.coldSaturationMax);
