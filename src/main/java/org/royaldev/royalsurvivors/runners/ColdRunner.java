@@ -78,10 +78,10 @@ public class ColdRunner implements Runnable {
         float cold = (pcm.isSet("cold")) ? pcm.getFloat("cold") : (float) Config.coldMax;
         cold *= Config.coldMax;
         cold += amount;
-        cold = .2F * (cold / Config.coldMax);
+        cold = Config.walkSpeed * (cold / Config.coldMax);
         if (cold <= 0F) cold = 0F;
-        if (cold >= .2F) cold = .2F;
-        pcm.set("cold", cold / .2F);
+        if (cold >= Config.walkSpeed) cold = Config.walkSpeed;
+        pcm.set("cold", cold / Config.walkSpeed);
         p.setWalkSpeed(cold);
     }
 
@@ -115,7 +115,11 @@ public class ColdRunner implements Runnable {
         World w = plugin.getServer().getWorld(Config.worldToUse);
         if (w == null) return;
         for (Player p : w.getPlayers()) {
-            if (!isInColdBiome(p)) continue;
+            if (!isInColdBiome(p)) {
+                if (getWarmth(p) < Config.coldSaturationMax) changeWarmth(p, Config.coldSaturationMax);
+                if (p.getWalkSpeed() < Config.walkSpeed) changeCold(p, Config.coldRestore * 5);
+                continue;
+            }
             int warmStrength = getWarmStrength(p);
             int drainAmount = (warmStrength > 0) ? Config.coldRestore * warmStrength : -Config.coldDrain;
             changeCold(p, drainAmount);
