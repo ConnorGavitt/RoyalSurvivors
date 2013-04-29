@@ -22,7 +22,7 @@ public class CompassUpdater implements Runnable {
         if (w == null) return;
         for (Player p : w.getPlayers()) {
             if (!p.getInventory().contains(Material.COMPASS)) continue;
-            PConfManager pcm = plugin.getUserdata(p);
+            PConfManager pcm = PConfManager.getPConfManager(p);
             String compassType = pcm.getString("gps.points.type");
             if (compassType == null) continue;
             if (compassType.equalsIgnoreCase("player")) {

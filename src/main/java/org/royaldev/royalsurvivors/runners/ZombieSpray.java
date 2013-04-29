@@ -26,7 +26,7 @@ public class ZombieSpray implements Runnable {
         World w = plugin.getServer().getWorld(Config.worldToUse);
         if (w == null) return;
         for (Player p : w.getPlayers()) {
-            PConfManager pcm = plugin.getUserdata(p);
+            PConfManager pcm = PConfManager.getPConfManager(p);
             if (!pcm.getBoolean("toxicspray_on", false)) continue;
             if (pcm.getLong("toxicspray_expire", 0L) <= System.currentTimeMillis()) {
                 pcm.set("toxicspray_on", false);

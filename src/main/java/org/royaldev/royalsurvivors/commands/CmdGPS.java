@@ -50,7 +50,7 @@ public class CmdGPS implements CommandExecutor {
                 cs.sendMessage(ChatColor.BLUE + "You look at your GPS.");
                 return true;
             }
-            PConfManager pcm = plugin.getUserdata(p);
+            PConfManager pcm = PConfManager.getPConfManager(p);
             String subcommand = args[0];
             if (subcommand.equalsIgnoreCase("here")) {
                 p.setCompassTarget(p.getLocation());
@@ -76,8 +76,8 @@ public class CmdGPS implements CommandExecutor {
                 List<String> theirRequests = linkRequests.get(t.getName());
                 if (theirRequests != null) {
                     if (theirRequests.contains(p.getName())) {
-                        plugin.getUserdata(p.getName()).set("gps.links." + t.getName(), true);
-                        plugin.getUserdata(t.getName()).set("gps.links." + p.getName(), true);
+                        PConfManager.getPConfManager(p.getName()).set("gps.links." + t.getName(), true);
+                        PConfManager.getPConfManager(t.getName()).set("gps.links." + p.getName(), true);
                         List<String> requests = linkRequests.get(p.getName());
                         if (requests != null) {
                             requests.remove(t.getName());

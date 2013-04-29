@@ -43,7 +43,7 @@ public class ThirstListener implements Listener {
             changeThirstSaturation(p, amount);
             return;
         }
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         if (!pcm.exists()) pcm.createFile();
         float thirst = (pcm.isSet("thirst")) ? pcm.getFloat("thirst") : 1F;
         thirst *= Config.thirstMax;
@@ -60,7 +60,7 @@ public class ThirstListener implements Listener {
      * @return Saturation out of thirstSaturationMax.
      */
     private float getThirstSaturation(final Player p) {
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         if (!pcm.exists()) pcm.createFile();
         return (pcm.isSet("thirstSaturation")) ? pcm.getFloat("thirstSaturation") : (float) Config.thirstSaturationMax;
     }
@@ -72,7 +72,7 @@ public class ThirstListener implements Listener {
      * @param amount Amount to change thirst saturation by (can be negative) - out of thirstSaturationMax
      */
     private void changeThirstSaturation(final Player p, final float amount) {
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         if (!pcm.exists()) pcm.createFile();
         pcm.set("thirstSaturation", getThirstSaturation(p) + amount);
     }
@@ -83,7 +83,7 @@ public class ThirstListener implements Listener {
         final ItemStack hand = e.getItem();
         if (hand == null || hand.getType() != Material.POTION || hand.getDurability() != (short) 0 || !RUtils.isInInfectedWorld(p))
             return;
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         float thirst = pcm.getFloat("thirst");
         if (!pcm.isSet("thirst")) thirst = 1F;
         if (thirst >= 1F) {
@@ -101,7 +101,7 @@ public class ThirstListener implements Listener {
     public void thirsty(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         if (!RUtils.isInInfectedWorld(p)) return;
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         float thirst = pcm.getFloat("thirst");
         if (!pcm.isSet("thirst")) thirst = 1F;
         p.setExp(thirst);
@@ -116,7 +116,7 @@ public class ThirstListener implements Listener {
         Location from = e.getFrom();
         Location to = e.getTo();
         if (from.getX() == to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ()) return; // looking around
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         Float saturation = pcm.getFloat("thirstSaturation");
         if (saturation == null) saturation = (float) Config.thirstSaturationMax;
         if (saturation > 0F) {

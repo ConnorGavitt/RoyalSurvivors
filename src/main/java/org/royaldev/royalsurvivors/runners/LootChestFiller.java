@@ -45,7 +45,7 @@ public class LootChestFiller implements Runnable {
     public void run() {
         World w = plugin.getServer().getWorld(Config.worldToUse);
         if (w == null) return;
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         ConfigurationSection cs = cm.getConfigurationSection("lootchests");
         if (cs == null) return;
         for (String key : cs.getKeys(false)) {

@@ -54,7 +54,7 @@ public class RUtils {
     }
 
     public static boolean isInInfectedWorld(Entity e) {
-        return e.getWorld().getName().equalsIgnoreCase(Config.worldToUse);
+        return isInInfectedWorld(e.getLocation());
     }
 
     public static boolean isInInfectedWorld(Location l) {

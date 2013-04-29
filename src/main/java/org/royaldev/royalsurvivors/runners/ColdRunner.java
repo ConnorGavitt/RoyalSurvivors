@@ -74,7 +74,7 @@ public class ColdRunner implements Runnable {
             changeWarmth(p, amount);
             return;
         }
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         if (!pcm.exists()) pcm.createFile();
         float cold = (pcm.isSet("cold")) ? pcm.getFloat("cold") : (float) Config.coldMax;
         cold *= Config.coldMax;
@@ -93,7 +93,7 @@ public class ColdRunner implements Runnable {
      * @return Saturation out of coldSaturationMax.
      */
     private float getWarmth(final Player p) {
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         if (!pcm.exists()) pcm.createFile();
         return (pcm.isSet("coldSaturation")) ? pcm.getFloat("coldSaturation") : (float) Config.coldSaturationMax;
     }
@@ -105,7 +105,7 @@ public class ColdRunner implements Runnable {
      * @param amount Amount to change cold saturation by (can be negative) - out of coldSaturationMax
      */
     private void changeWarmth(final Player p, final float amount) {
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         if (!pcm.exists()) pcm.createFile();
         pcm.set("coldSaturation", getWarmth(p) + amount);
     }

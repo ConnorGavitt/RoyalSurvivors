@@ -6,12 +6,58 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfManager extends YamlConfiguration {
+
+    private static final Map<String, ConfManager> confs = new HashMap<String, ConfManager>();
+
+    public static ConfManager getConfManager(String s) {
+        synchronized (confs) {
+            if (confs.containsKey(s)) return confs.get(s);
+            final ConfManager cm = new ConfManager(s);
+            confs.put(s, cm);
+            return cm;
+        }
+    }
+
+    public static boolean isManagerCreated(String s) {
+        synchronized (confs) {
+            return confs.containsKey(s);
+        }
+    }
+
+    public static void saveAllManagers() {
+        synchronized (confs) {
+            for (ConfManager cm : confs.values()) cm.forceSave();
+        }
+    }
+
+    public static void removeAllManagers() {
+        synchronized (confs) {
+            for (ConfManager cm : confs.values()) cm.discard(false);
+        }
+    }
+
+    public static int managersCreated() {
+        synchronized (confs) {
+            return confs.size();
+        }
+    }
+
+    public static Collection<ConfManager> getAllManagers() {
+        synchronized (confs) {
+            return Collections.synchronizedCollection(confs.values());
+        }
+    }
 
     private File pconfl = null;
     private final Object saveLock = new Object();
     private final String path;
+    private final String name;
 
     /**
      * Configuration file manager
@@ -22,13 +68,14 @@ public class ConfManager extends YamlConfiguration {
      */
     ConfManager(String filename) {
         super();
-        File dataFolder = RoyalSurvivors.dataFolder;
+        File dataFolder = RoyalSurvivors.instance.getDataFolder();
         path = dataFolder + File.separator + filename;
         pconfl = new File(path);
         try {
             load(pconfl);
         } catch (Exception ignored) {
         }
+        name = filename;
     }
 
     /**
@@ -39,22 +86,24 @@ public class ConfManager extends YamlConfiguration {
      * @param file File object for the config
      */
     ConfManager(File file) {
-        super();
-        File dataFolder = RoyalSurvivors.dataFolder;
-        path = dataFolder + File.separator + file.getName();
-        pconfl = new File(path);
+        this(file.getName());
+    }
+
+    /**
+     * Just to prevent construction outside of package.
+     */
+    @SuppressWarnings("unused")
+    private ConfManager() {
+        path = "";
+        name = "";
+    }
+
+    public void reload() {
+        forceSave();
         try {
             load(pconfl);
         } catch (Exception ignored) {
         }
-    }
-
-    /**
-     * No outside construction, please.
-     */
-    @SuppressWarnings("unused")
-    ConfManager() {
-        path = "";
     }
 
     public boolean exists() {
@@ -88,7 +137,7 @@ public class ConfManager extends YamlConfiguration {
      * @return Location or null if path does not exist or if config doesn't exist
      */
     public Location getLocation(String path) {
-        if (get(path) == null) return null;
+        if (!isSet(path)) return null;
         String world = getString(path + ".w");
         double x = getDouble(path + ".x");
         double y = getDouble(path + ".y");
@@ -96,6 +145,16 @@ public class ConfManager extends YamlConfiguration {
         float pitch = getFloat(path + ".pitch");
         float yaw = getFloat(path + ".yaw");
         return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
+    }
+
+    public Location getLocation(String path, String worldName) {
+        if (!isSet(path)) return null;
+        double x = getDouble(path + ".x");
+        double y = getDouble(path + ".y");
+        double z = getDouble(path + ".z");
+        float pitch = getFloat(path + ".pitch");
+        float yaw = getFloat(path + ".yaw");
+        return new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
     }
 
     /**
@@ -115,5 +174,24 @@ public class ConfManager extends YamlConfiguration {
 
     public Float getFloat(String path) {
         return (float) getDouble(path);
+    }
+
+    /**
+     * Removes the reference to this manager without saving.
+     */
+    public void discard() {
+        discard(false);
+    }
+
+    /**
+     * Removes the reference to this manager.
+     *
+     * @param save Save manager before removing references?
+     */
+    public void discard(boolean save) {
+        synchronized (confs) {
+            if (save) forceSave();
+            confs.remove(name);
+        }
     }
 }

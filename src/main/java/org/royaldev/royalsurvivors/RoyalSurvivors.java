@@ -3,7 +3,6 @@ package org.royaldev.royalsurvivors;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -97,20 +96,6 @@ public class RoyalSurvivors extends JavaPlugin {
             if (!cm.exists()) cm.createFile();
             confs.put(path, cm);
             return cm;
-        }
-    }
-
-    public PConfManager getUserdata(CommandSender cs) {
-        return getUserdata(cs.getName());
-    }
-
-    public PConfManager getUserdata(String s) {
-        synchronized (pconfs) {
-            if (pconfs.containsKey(s)) return pconfs.get(s);
-            PConfManager pcm = new PConfManager(s);
-            if (!pcm.exists()) pcm.createFile();
-            pconfs.put(s, pcm);
-            return pcm;
         }
     }
 

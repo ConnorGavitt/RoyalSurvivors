@@ -181,14 +181,14 @@ public class SurvivorsListener implements Listener {
             e.getRecipients().clear();
             return;
         }
-        String channel = plugin.getUserdata(p).getString("radio.channel");
+        String channel = PConfManager.getPConfManager(p).getString("radio.channel");
         if (channel == null) {
             e.getRecipients().clear();
             return;
         }
         List<Player> toRemove = new ArrayList<Player>();
         for (Player t : e.getRecipients()) {
-            PConfManager pcm = plugin.getUserdata(t);
+            PConfManager pcm = PConfManager.getPConfManager(t);
             String theirChannel = pcm.getString("radio.channel");
             Boolean isOn = pcm.getBoolean("radio.on");
             if (isOn == null) isOn = false;
@@ -202,7 +202,7 @@ public class SurvivorsListener implements Listener {
     @EventHandler
     public void banHandler(PlayerLoginEvent e) {
         Player p = e.getPlayer();
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         if (!pcm.isSet("banned") || !pcm.isSet("banexpiresafter")) return;
         boolean banned = pcm.getBoolean("banned");
         long banExpiresAfter = pcm.getLong("banexpiresafter");
@@ -225,7 +225,7 @@ public class SurvivorsListener implements Listener {
         Player p = e.getPlayer();
         setPlayerCharacteristics(p);
         p.setLevel(0); // no XP for you!
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         float thirst = pcm.getFloat("thirst");
         if (!pcm.isSet("thirst")) thirst = 1F;
         p.setExp(thirst);
@@ -265,7 +265,7 @@ public class SurvivorsListener implements Listener {
     public void minimizeXP(PlayerExpChangeEvent e) {
         if (!RUtils.isInInfectedWorld(e.getPlayer())) return;
         Player p = e.getPlayer();
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         float thirst = pcm.getFloat("thirst");
         if (!pcm.isSet("thirst")) {
             thirst = 1F;
@@ -299,7 +299,7 @@ public class SurvivorsListener implements Listener {
         if (!(e.getBlock().getState() instanceof Furnace)) return;
         Furnace f = (Furnace) e.getBlock().getState();
         if (!RUtils.isInInfectedWorld(f.getLocation())) return;
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         Location l = f.getLocation();
         String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         if (!cm.getBoolean(path, false)) return;
@@ -311,7 +311,7 @@ public class SurvivorsListener implements Listener {
         if (!(e.getBlock().getState() instanceof Furnace)) return;
         Furnace f = (Furnace) e.getBlock().getState();
         if (!RUtils.isInInfectedWorld(f.getLocation())) return;
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         Location l = f.getLocation();
         String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         if (!cm.getBoolean(path, false)) return;
@@ -325,7 +325,7 @@ public class SurvivorsListener implements Listener {
         Block b = e.getBlock();
         if (!(b.getState() instanceof Furnace)) return;
         Furnace f = (Furnace) b.getState();
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         Location l = f.getLocation();
         String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         if (!cm.getBoolean(path, false)) return;
@@ -355,7 +355,7 @@ public class SurvivorsListener implements Listener {
         Block b = e.getBlockPlaced();
         if (!(b.getState() instanceof Furnace)) return;
         Furnace f = (Furnace) b.getState();
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         Location l = f.getLocation();
         String path = "furnaces." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         cm.set(path, true);
@@ -399,7 +399,7 @@ public class SurvivorsListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent e) {
         if (!RUtils.isInInfectedWorld(e.getEntity())) return;
         Player p = e.getEntity();
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         e.setDroppedExp(0);
         if (e.getDrops().isEmpty()) return;
         Location place = p.getLocation();
@@ -476,7 +476,7 @@ public class SurvivorsListener implements Listener {
     public void radioChatter(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         if (!RUtils.isInInfectedWorld(p)) return;
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         boolean isOn = pcm.getBoolean("radio.on", false);
         e.setMessage(RUtils.decolorize(e.getMessage()));
         List<Player> toRemove = new ArrayList<Player>();
@@ -531,7 +531,7 @@ public class SurvivorsListener implements Listener {
         if (!(RUtils.isInInfectedWorld(p)) || !(e.getRecipe() instanceof ShapelessRecipe)) return;
         ShapelessRecipe slr = (ShapelessRecipe) e.getRecipe();
         if (!shapelessRecipesMatch(slr, plugin.batteryRefill)) return;
-        plugin.getUserdata(p).set("radio.battery", 100);
+        PConfManager.getPConfManager(p).set("radio.battery", 100);
     }
 
     @EventHandler
@@ -614,7 +614,7 @@ public class SurvivorsListener implements Listener {
         Player p = e.getPlayer();
         if (!RUtils.isInInfectedWorld(p)) return;
         e.setExpToDrop(0);
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         float thirst = pcm.getFloat("thirst");
         if (!pcm.isSet("thirst")) {
             thirst = 1F;
@@ -634,7 +634,7 @@ public class SurvivorsListener implements Listener {
             if (!respawns.contains(p.getName())) return;
         }
         if (!RUtils.isInInfectedWorld(e.getRespawnLocation())) e.setRespawnLocation(w.getSpawnLocation());
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         p.setExp(1F);
         pcm.set("thirst", 1F);
         synchronized (respawns) {
@@ -682,7 +682,7 @@ public class SurvivorsListener implements Listener {
         Player p = e.getEntity();
         if (!RUtils.isInInfectedWorld(p) || !Config.banOnDeath) return;
         p.setBanned(true);
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         pcm.set("banned", true);
         pcm.set("banexpiresafter", (Config.banLength < 0L) ? 0L : (Config.banLength * 60L * 20L) + System.currentTimeMillis());
     }
@@ -691,7 +691,7 @@ public class SurvivorsListener implements Listener {
     public void deathChestBreak(BlockBreakEvent e) {
         Block b = e.getBlock();
         if (!RUtils.isInInfectedWorld(b.getLocation()) || !(b.getState() instanceof Chest)) return;
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         Location l = b.getLocation();
         String path = "deathchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         boolean isDeathChest = cm.getBoolean(path, false);
@@ -721,7 +721,7 @@ public class SurvivorsListener implements Listener {
         if (hdn == null || !hdn.equals(fim.getDisplayName())) return;
         List<String> hl = him.getLore();
         if (hl == null || !hl.containsAll(fim.getLore())) return;
-        PConfManager pcm = plugin.getUserdata(p);
+        PConfManager pcm = PConfManager.getPConfManager(p);
         if (pcm.getBoolean("toxicspray_on", false)) return; // don't waste toxicsprays
         pcm.set("toxicspray_on", true);
         pcm.set("toxicspray_expire", System.currentTimeMillis() + (Config.toxicDuration * 1000));
@@ -802,7 +802,7 @@ public class SurvivorsListener implements Listener {
         b.setData(signToChest(data));
         for (ItemStack is : lc.getRandomLoot()) c.getInventory().addItem(is);
         shuffleInventory(c.getInventory());
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         Location l = b.getLocation();
         String path = "lootchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         cm.set(path + ".enabled", true);
@@ -841,7 +841,7 @@ public class SurvivorsListener implements Listener {
         Player p = e.getPlayer();
         Block b = e.getBlock();
         if (!RUtils.isInInfectedWorld(b.getLocation())) return;
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         Location l = b.getLocation();
         String path = "lootchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         if (!cm.getBoolean(path + ".enabled", false)) return;
@@ -868,7 +868,7 @@ public class SurvivorsListener implements Listener {
         Block b = e.getBlockPlaced();
         if (!(b.getState() instanceof Chest)) return;
         Chest c = (Chest) b.getState();
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         Location l = c.getLocation();
         String path = "repairchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         cm.set(path + ".enabled", true);
@@ -878,7 +878,7 @@ public class SurvivorsListener implements Listener {
     public void breakRepairChest(BlockBreakEvent e) {
         Block b = e.getBlock();
         if (!RUtils.isInInfectedWorld(b.getLocation())) return;
-        ConfManager cm = plugin.getConfig("otherdata.yml");
+        ConfManager cm = ConfManager.getConfManager("otherdata.yml");
         Location l = b.getLocation();
         String path = "repairchests." + l.getWorld().getName() + "," + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ();
         if (!cm.getBoolean(path + ".enabled", false)) return;

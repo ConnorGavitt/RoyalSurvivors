@@ -46,7 +46,7 @@ public class BatteryRunner implements Runnable {
         World w = plugin.getServer().getWorld(Config.worldToUse);
         if (w == null) return;
         for (Player p : w.getPlayers()) {
-            PConfManager pcm = plugin.getUserdata(p);
+            PConfManager pcm = PConfManager.getPConfManager(p);
             if (!pcm.getBoolean("radio.on", false)) continue;
             if (!hasRadio(p)) continue;
             int slot = getRadioSlot(p);

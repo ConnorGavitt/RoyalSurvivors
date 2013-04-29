@@ -41,7 +41,7 @@ public class CmdRadio implements CommandExecutor {
                 cs.sendMessage(ChatColor.BLUE + "You don't have your radio.");
                 return true;
             }
-            PConfManager pcm = plugin.getUserdata(p);
+            PConfManager pcm = PConfManager.getPConfManager(p);
             boolean isOn = pcm.getBoolean("radio.on", false);
             if (args.length < 1) {
                 if (isOn) {
