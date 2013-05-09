@@ -121,7 +121,9 @@ public class SurvivorsListener implements Listener {
      * @return If A & B have the same ingredients
      */
     private boolean shapelessRecipesMatch(ShapelessRecipe a, ShapelessRecipe b) {
-        return a.getIngredientList().containsAll(b.getIngredientList());
+        final List<ItemStack> aL = a.getIngredientList();
+        final List<ItemStack> bL = b.getIngredientList();
+        return aL.size() == bL.size() && aL.containsAll(bL);
     }
 
     /**
@@ -132,7 +134,9 @@ public class SurvivorsListener implements Listener {
      * @return If A & B have the same ingredients
      */
     private boolean shapedRecipesMatch(ShapedRecipe a, ShapedRecipe b) {
-        return a.getIngredientMap().values().containsAll(b.getIngredientMap().values());
+        final Collection<ItemStack> aC = a.getIngredientMap().values();
+        final Collection<ItemStack> bC = b.getIngredientMap().values();
+        return aC.size() == bC.size() && aC.containsAll(bC);
     }
 
     /**
