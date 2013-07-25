@@ -5,11 +5,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
 public class RUtils {
@@ -89,6 +92,18 @@ public class RUtils {
         boolean providesShade = !ArrayUtils.contains(noShade, b.getType());
         boolean isAbovePlayer = l.getY() < b.getY();
         return providesShade && isAbovePlayer;
+    }
+
+    public static Command getCommand(String name) {
+        try {
+            final Field map = RoyalSurvivors.instance.getServer().getPluginManager().getClass().getDeclaredField("commandMap");
+            map.setAccessible(true);
+            final CommandMap cm = (CommandMap) map.get(RoyalSurvivors.instance.getServer().getPluginManager());
+            return cm.getCommand(name);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

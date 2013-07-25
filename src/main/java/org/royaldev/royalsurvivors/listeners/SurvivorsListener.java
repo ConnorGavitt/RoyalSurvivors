@@ -9,7 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Furnace;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -194,8 +194,7 @@ public class SurvivorsListener implements Listener {
         for (Player t : e.getRecipients()) {
             PConfManager pcm = PConfManager.getPConfManager(t);
             String theirChannel = pcm.getString("radio.channel");
-            Boolean isOn = pcm.getBoolean("radio.on");
-            if (isOn == null) isOn = false;
+            boolean isOn = pcm.getBoolean("radio.on", false);
             if (theirChannel == null || !theirChannel.equalsIgnoreCase(channel) || !hasRadio(t) || !isOn)
                 toRemove.add(t);
         }
@@ -464,16 +463,13 @@ public class SurvivorsListener implements Listener {
         String[] split = e.getMessage().split(" ");
         if (split.length < 1) return;
         String root = split[0].substring(1); // the command label (remove /)
-        PluginCommand pc = plugin.getCommand(root);
-        if (pc == null) {
-            pc = plugin.getServer().getPluginCommand(root);
-            if (pc != null) {
-                if (Config.allowedCommands.contains(pc.getName())) return;
-                for (String alias : pc.getAliases()) if (Config.allowedCommands.contains(alias)) return;
-            }
-            p.sendMessage(ChatColor.BLUE + "Nothing happens...");
-            e.setCancelled(true);
+        Command c = RUtils.getCommand(root);
+        if (c != null) {
+            if (Config.allowedCommands.contains(c.getName())) return;
+            for (String alias : c.getAliases()) if (Config.allowedCommands.contains(alias)) return;
         }
+        p.sendMessage(ChatColor.BLUE + "Nothing happens...");
+        e.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -605,7 +601,7 @@ public class SurvivorsListener implements Listener {
             e.setCancelled(true); // don't waste medpacks - should never happen, though
             return;
         }
-        int newHealth = p.getHealth() + 8;
+        double newHealth = p.getHealth() + 8D;
         int newFood = p.getFoodLevel() + 8;
         if (newHealth > p.getMaxHealth()) newHealth = p.getMaxHealth();
         if (newFood > 20) newFood = 20;

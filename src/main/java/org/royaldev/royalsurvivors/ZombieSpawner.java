@@ -235,13 +235,13 @@ public class ZombieSpawner {
      * @param health Health (in half hearts) of zombie
      * @return Guessed level
      */
-    public static int guessLevel(int health) {
-        health -= r.nextInt(20);
-        health /= nextInt(10, 20);
+    public static double guessLevel(double health) {
+        health -= (double) r.nextInt(20);
+        health /= (double) nextInt(10, 20);
         return health;
     }
 
-    public static void applyNameplate(Zombie z, int level, int currentHealth, int maxHealth) {
+    public static void applyNameplate(Zombie z, int level, double currentHealth, double maxHealth) {
         if (!Config.useNameplates) return;
         if (level < 1) level = 1;
         if (level > 7) level = 7;
