@@ -2,6 +2,7 @@ package org.royaldev.royalsurvivors.runners;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -116,6 +117,7 @@ public class ColdRunner implements Runnable {
         World w = plugin.getServer().getWorld(Config.worldToUse);
         if (w == null) return;
         for (Player p : w.getPlayers()) {
+            if (p.getGameMode() == GameMode.CREATIVE) continue;
             if (!isInColdBiome(p)) {
                 if (getWarmth(p) < Config.coldSaturationMax) changeWarmth(p, Config.coldSaturationMax);
                 if (p.getWalkSpeed() < Config.walkSpeed) changeCold(p, Config.coldRestore * 5);

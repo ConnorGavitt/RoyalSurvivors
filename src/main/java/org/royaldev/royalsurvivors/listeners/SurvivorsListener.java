@@ -458,12 +458,12 @@ public class SurvivorsListener implements Listener {
 
     @EventHandler
     public void stopAllCommands(PlayerCommandPreprocessEvent e) {
-        Player p = e.getPlayer();
+        final Player p = e.getPlayer();
         if (!RUtils.isInInfectedWorld(p) || p.hasPermission("rsurv.allowcommands")) return;
         String[] split = e.getMessage().split(" ");
         if (split.length < 1) return;
         String root = split[0].substring(1); // the command label (remove /)
-        Command c = RUtils.getCommand(root);
+        final Command c = RUtils.getCommand(root);
         if (c != null) {
             if (Config.allowedCommands.contains(c.getName())) return;
             for (String alias : c.getAliases()) if (Config.allowedCommands.contains(alias)) return;
