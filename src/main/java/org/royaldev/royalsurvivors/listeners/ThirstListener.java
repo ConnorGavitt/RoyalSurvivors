@@ -26,12 +26,6 @@ import org.royaldev.royalsurvivors.RoyalSurvivors;
 
 public class ThirstListener implements Listener {
 
-    private final RoyalSurvivors plugin;
-
-    public ThirstListener(RoyalSurvivors instance) {
-        plugin = instance;
-    }
-
     /**
      * Changes a player's thirst by a set amount.
      *

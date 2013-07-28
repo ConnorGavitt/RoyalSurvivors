@@ -15,6 +15,7 @@ import org.royaldev.royalsurvivors.commands.CmdRadio;
 import org.royaldev.royalsurvivors.commands.CmdSurvivors;
 import org.royaldev.royalsurvivors.listeners.SurvivorsListener;
 import org.royaldev.royalsurvivors.listeners.ThirstListener;
+import org.royaldev.royalsurvivors.listeners.UHCListener;
 import org.royaldev.royalsurvivors.runners.BatteryRunner;
 import org.royaldev.royalsurvivors.runners.ColdRunner;
 import org.royaldev.royalsurvivors.runners.CompassUpdater;
@@ -246,7 +247,8 @@ public class RoyalSurvivors extends JavaPlugin {
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new SurvivorsListener(this), this);
-        pm.registerEvents(new ThirstListener(this), this);
+        pm.registerEvents(new ThirstListener(), this);
+        pm.registerEvents(new UHCListener(), this);
 
         BukkitScheduler bs = getServer().getScheduler();
         bs.runTaskTimer(this, new BatteryRunner(this), Config.batteryDrainInterval * 60L * 20L, Config.batteryDrainInterval * 60L * 20L);

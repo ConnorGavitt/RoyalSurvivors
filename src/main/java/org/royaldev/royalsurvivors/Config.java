@@ -52,10 +52,13 @@ public class Config {
         coldEnabled = c.getBoolean("gameplay.cold.enabled");
         useNameplates = c.getBoolean("gameplay.zombies.nameplates.enabled");
         nameplateAlwaysVisible = c.getBoolean("gameplay.zombies.nameplates.visible_from_range");
+        uhcGoldDrops = c.getBoolean("gameplay.uhc.gold_drops.enabled");
+        uhcRegenOff = c.getBoolean("gameplay.uhc.regeneration_off");
 
         localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
         toxicRadius = c.getDouble("gameplay.zombies.toxicspray.radius");
         lootChestRadius = c.getDouble("loot_chests.refill.radius");
+        uhcGoldDropsChance = c.getDouble("gameplay.uhc.gold_drops.chance");
 
         try {
             walkSpeed = Float.parseFloat(c.getString("gameplay.player.walk_speed"));
@@ -150,6 +153,8 @@ public class Config {
         if (grenadeHighDamage < 0) grenadeHighDamage = 3;
         if (grenadeLowDamage < grenadeHighDamage) grenadeLowDamage = grenadeHighDamage;
 
+        if (uhcGoldDropsChance < 0D) uhcGoldDropsChance = 25D;
+
         try {
             radioMaterial = Material.valueOf(radioItem);
         } catch (Exception e) {
@@ -194,10 +199,13 @@ public class Config {
     public static boolean coldEnabled;
     public static boolean useNameplates;
     public static boolean nameplateAlwaysVisible;
+    public static boolean uhcGoldDrops;
+    public static boolean uhcRegenOff;
 
     public static double localChatRadius;
     public static double toxicRadius;
     public static double lootChestRadius;
+    public static double uhcGoldDropsChance;
 
     public static long deathChestRemoveInterval;
     public static long repairChestRunInterval;

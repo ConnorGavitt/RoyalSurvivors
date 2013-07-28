@@ -89,6 +89,16 @@ gameplay:
     restore:
       # How much thirst (in % of XP bar) to restore after drinking a water bottle
       amount: 20
+    # Options to make gameplay more like Ultra Hardcore.
+  uhc:
+    # Makes zombies have a chance of dropping gold ingots on death.
+    gold_drops:
+      # Enable zombie gold drops?
+      enabled: false
+      # Chance in percent out of 100
+      chance: 25.0
+    # Turns off natural health regeneration
+    regeneration_off: false
   # Options that affect the way zombies work
   zombies:
     # Options pertaining to zombie nameplates
