@@ -54,6 +54,7 @@ public class Config {
         nameplateAlwaysVisible = c.getBoolean("gameplay.zombies.nameplates.visible_from_range");
         uhcGoldDrops = c.getBoolean("gameplay.uhc.gold_drops.enabled");
         uhcRegenOff = c.getBoolean("gameplay.uhc.regeneration_off");
+        useRepairChestWhitelist = c.getBoolean("miscellaneous.repair_chests.whitelist.enabled");
 
         localChatRadius = c.getDouble("gameplay.radio.local_chat_radius");
         toxicRadius = c.getDouble("gameplay.zombies.toxicspray.radius");
@@ -121,6 +122,8 @@ public class Config {
         squidLootSets = c.getStringList("miscellaneous.squid_loot.loot_sets");
         ignoredSpawnReasons = c.getStringList("miscellaneous.ignored_spawn_reasons");
         warmBlocks = c.getStringList("gameplay.cold.warm_blocks");
+
+        repairWhitelist = c.getIntegerList("miscellaneous.repair_chests.whitelist.list");
 
         if (maxHealth < 1) maxHealth = 1;
         if (maxAir < 0) maxAir = 0;
@@ -201,6 +204,7 @@ public class Config {
     public static boolean nameplateAlwaysVisible;
     public static boolean uhcGoldDrops;
     public static boolean uhcRegenOff;
+    public static boolean useRepairChestWhitelist;
 
     public static double localChatRadius;
     public static double toxicRadius;
@@ -266,5 +270,7 @@ public class Config {
     public static List<String> squidLootSets;
     public static List<String> ignoredSpawnReasons;
     public static List<String> warmBlocks;
+
+    public static List<Integer> repairWhitelist;
 
 }

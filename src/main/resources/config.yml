@@ -278,6 +278,10 @@ miscellaneous:
     repair_amount: 5
     # How often to repair items in chests in ticks
     repair_frequency: 100
+    # List of item IDs to repair.
+    whitelist:
+      enabled: true
+      list: [276, 277, 278, 279, 293, 310, 311, 312, 313, 256, 257, 258, 267, 292, 306, 307, 308, 309, 272, 273, 274, 275, 291, 268, 269, 270, 271, 290, 283, 284, 285, 286, 294, 314, 315, 316, 317]
   allowed_commands:
   - "login"
   - "register"

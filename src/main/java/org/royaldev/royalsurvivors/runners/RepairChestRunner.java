@@ -50,6 +50,7 @@ public class RepairChestRunner implements Runnable {
             Inventory i = c.getInventory();
             for (ItemStack is : i) {
                 if (is == null) continue;
+                if (Config.useRepairChestWhitelist && !Config.repairWhitelist.contains(is.getTypeId())) continue;
                 short durability = is.getDurability();
                 if (durability == (short) 0) continue;
                 durability -= Config.repairChestRepairAmount;

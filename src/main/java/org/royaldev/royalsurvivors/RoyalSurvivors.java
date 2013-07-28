@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 public class RoyalSurvivors extends JavaPlugin {
 
     // TODO: Radio block?
-    // TODO: Cold - must wear armor/be near fire in winter biomes, or walk speed goes down until death
     // TODO: Detection
 
     public static File dataFolder;
@@ -84,22 +83,6 @@ public class RoyalSurvivors extends JavaPlugin {
         }
     }
 
-    /**
-     * Gets the ConfManager for a path local to the plugin directory.
-     *
-     * @param path ex. "furnaces.yml"
-     * @return ConfManager
-     */
-    public ConfManager getConfig(String path) {
-        synchronized (confs) {
-            if (confs.containsKey(path)) return confs.get(path);
-            ConfManager cm = new ConfManager(path);
-            if (!cm.exists()) cm.createFile();
-            confs.put(path, cm);
-            return cm;
-        }
-    }
-
     public static void debugStatic(Object o) {
         if (!Config.debug) return;
         System.out.println("[" + RoyalSurvivors.instance.getDescription().getName() + "] " + o);
@@ -118,14 +101,14 @@ public class RoyalSurvivors extends JavaPlugin {
             getLogger().warning("Could not get CraftBukkit version! No version checking will take place.");
             return true;
         }
-        Integer currentVersion;
+        int currentVersion;
         try {
             currentVersion = Integer.parseInt(m.group(1));
         } catch (NumberFormatException e) {
             getLogger().warning("Could not get CraftBukkit version! No version checking will take place.");
             return true;
         }
-        return currentVersion == null || currentVersion >= minVersion;
+        return currentVersion >= minVersion;
     }
 
     private void addAllRecipes() {
@@ -245,12 +228,12 @@ public class RoyalSurvivors extends JavaPlugin {
 
         c = new Config(this);
 
-        PluginManager pm = getServer().getPluginManager();
+        final PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new SurvivorsListener(this), this);
         pm.registerEvents(new ThirstListener(), this);
         pm.registerEvents(new UHCListener(), this);
 
-        BukkitScheduler bs = getServer().getScheduler();
+        final BukkitScheduler bs = getServer().getScheduler();
         bs.runTaskTimer(this, new BatteryRunner(this), Config.batteryDrainInterval * 60L * 20L, Config.batteryDrainInterval * 60L * 20L);
         bs.runTaskTimer(this, new CompassUpdater(this), 0L, Config.gpsUpdateInterval * 20L);
         bs.runTaskTimer(this, new ZombieSpray(this), 20L, Config.toxicInterval);

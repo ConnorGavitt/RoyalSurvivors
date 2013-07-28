@@ -15,6 +15,8 @@ import org.royaldev.royalsurvivors.RoyalSurvivors;
 
 public class ColdRunner implements Runnable {
 
+    // TODO: Need armor? Perhaps armor reduces rate of chill.
+
     private final RoyalSurvivors plugin;
 
     public ColdRunner(RoyalSurvivors instance) {
