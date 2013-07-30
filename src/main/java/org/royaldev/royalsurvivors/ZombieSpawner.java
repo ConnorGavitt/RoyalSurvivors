@@ -16,6 +16,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -241,15 +242,17 @@ public class ZombieSpawner {
         return health;
     }
 
+    private final static DecimalFormat df = new DecimalFormat("0.#");
+
     public static void applyNameplate(Zombie z, int level, double currentHealth, double maxHealth) {
         if (!Config.useNameplates) return;
         if (level < 1) level = 1;
         if (level > 7) level = 7;
         String format = Config.nameplateFormat;
-        format = format.replace("{currenthealth}", String.valueOf(currentHealth));
-        format = format.replace("{maxhealth}", String.valueOf(maxHealth));
-        format = format.replace("{currenthearts}", String.valueOf(currentHealth / 2D));
-        format = format.replace("{maxhearts}", String.valueOf(maxHealth / 2D));
+        format = format.replace("{currenthealth}", df.format(currentHealth));
+        format = format.replace("{maxhealth}", df.format(maxHealth));
+        format = format.replace("{currenthearts}", df.format(currentHealth / 2D));
+        format = format.replace("{maxhearts}", df.format(maxHealth / 2D));
         format = format.replace("{level}", String.valueOf(level));
         if (format.length() > 32) format = format.substring(0, 32);
         z.setCustomName(format);
