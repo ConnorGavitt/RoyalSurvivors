@@ -281,14 +281,14 @@ miscellaneous:
     # List of item IDs to repair.
     whitelist:
       enabled: true
-      list: [276, 277, 278, 279, 293, 310, 311, 312, 313, 256, 257, 258, 267, 292, 306, 307, 308, 309, 272, 273, 274, 275, 291, 268, 269, 270, 271, 290, 283, 284, 285, 286, 294, 314, 315, 316, 317]
+      list: [276, 277, 278, 279, 293, 310, 311, 312, 313, 256, 257, 258, 267, 292, 306, 307, 308, 309, 272, 273, 274, 275, 291, 268, 269, 270, 271, 290, 283, 284, 285, 286, 294, 314, 315, 316, 317, 298, 299, 300, 301, 261, 302, 303, 304, 305]
   allowed_commands:
   - "login"
   - "register"
   # Prints a whole bunch of interesting dev information to console
   debug: false
-  # How often to loop through all death chests (on the main thread), check if they are empty, and if they are, remove
-  # them. Less than or equal to 0 is disabled.
+  # How often in minutes to loop through all death chests (on the main thread), check if they are empty, and if they
+  # are, remove them. Less than or equal to 0 is disabled.
   remove_death_chests_every: 5
 
 # Userdata saving options
