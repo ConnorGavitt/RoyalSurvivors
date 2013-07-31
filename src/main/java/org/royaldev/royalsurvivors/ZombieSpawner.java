@@ -75,8 +75,7 @@ public class ZombieSpawner {
             if (getNumberMobs(w) > Config.maxMobs && Config.maxMobs > -1) {
                 if (!Config.removeIfMax) return null;
                 for (Entity e : w.getEntities()) {
-                    if (!(e instanceof Zombie)) continue;
-                    if (e instanceof Player) continue;
+                    if (!(e instanceof Zombie) || e instanceof Player) continue;
                     e.remove();
                     break;
                 }

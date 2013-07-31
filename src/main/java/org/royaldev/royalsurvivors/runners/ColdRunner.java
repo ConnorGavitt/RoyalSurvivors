@@ -10,7 +10,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.royaldev.royalsurvivors.Config;
-import org.royaldev.royalsurvivors.PConfManager;
+import org.royaldev.royalsurvivors.configuration.PConfManager;
 import org.royaldev.royalsurvivors.RoyalSurvivors;
 
 public class ColdRunner implements Runnable {

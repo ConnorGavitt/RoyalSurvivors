@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.royaldev.royalsurvivors.Config;
-import org.royaldev.royalsurvivors.PConfManager;
+import org.royaldev.royalsurvivors.configuration.PConfManager;
 import org.royaldev.royalsurvivors.RoyalSurvivors;
 
 import java.util.Arrays;

@@ -7,7 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.royaldev.royalsurvivors.Config;
-import org.royaldev.royalsurvivors.PConfManager;
+import org.royaldev.royalsurvivors.configuration.PConfManager;
 import org.royaldev.royalsurvivors.RUtils;
 import org.royaldev.royalsurvivors.RoyalSurvivors;
 

@@ -13,6 +13,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.royaldev.royalsurvivors.commands.CmdGPS;
 import org.royaldev.royalsurvivors.commands.CmdRadio;
 import org.royaldev.royalsurvivors.commands.CmdSurvivors;
+import org.royaldev.royalsurvivors.configuration.ConfManager;
+import org.royaldev.royalsurvivors.configuration.PConfManager;
 import org.royaldev.royalsurvivors.listeners.SurvivorsListener;
 import org.royaldev.royalsurvivors.listeners.ThirstListener;
 import org.royaldev.royalsurvivors.listeners.UHCListener;
@@ -56,9 +58,6 @@ public class RoyalSurvivors extends JavaPlugin {
     public ItemStack emptyMedpack;
 
     public static RoyalSurvivors instance;
-
-    public final Map<String, PConfManager> pconfs = new HashMap<String, PConfManager>();
-    public final Map<String, ConfManager> confs = new HashMap<String, ConfManager>();
 
     private final Pattern versionPattern = Pattern.compile("(\\d+\\.\\d+\\.\\d+)(\\-SNAPSHOT)?(\\-local\\-(\\d{8}\\.\\d{6})|\\-(\\d+))?");
 
@@ -240,7 +239,7 @@ public class RoyalSurvivors extends JavaPlugin {
         bs.runTaskTimer(this, new LootChestFiller(this), 20L, 200L);
         bs.runTaskTimer(this, new RepairChestRunner(this), 20L, Config.repairChestRunInterval);
         bs.runTaskTimer(this, new ColdRunner(this), 20L, Config.coldDrainInterval);
-        bs.runTaskTimerAsynchronously(this, new UserdataSaver(this), 20L, Config.userdataSaveInterval * 60L * 20L);
+        bs.runTaskTimerAsynchronously(this, new UserdataSaver(), 20L, Config.userdataSaveInterval * 60L * 20L);
         if (Config.deathChestRemoveInterval > 0L)
             bs.runTaskTimer(this, new DeathChestRemover(this), 0L, Config.deathChestRemoveInterval * 60L * 20L);
 
@@ -279,12 +278,8 @@ public class RoyalSurvivors extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        synchronized (pconfs) {
-            for (PConfManager pcm : pconfs.values()) pcm.forceSave();
-        }
-        synchronized (confs) {
-            for (ConfManager cm : confs.values()) cm.forceSave();
-        }
+        PConfManager.saveAllManagers();
+        ConfManager.saveAllManagers();
     }
 
 }

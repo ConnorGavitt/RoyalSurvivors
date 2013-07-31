@@ -1,17 +1,16 @@
-package org.royaldev.royalsurvivors;
+package org.royaldev.royalsurvivors.configuration;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.royaldev.royalsurvivors.RoyalSurvivors;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConfManager extends YamlConfiguration {
+public class ConfManager extends GeneralConfManager {
 
     private static final Map<String, ConfManager> confs = new HashMap<String, ConfManager>();
 
@@ -37,8 +36,10 @@ public class ConfManager extends YamlConfiguration {
     }
 
     public static void removeAllManagers() {
+        Collection<ConfManager> oldConfs = new ArrayList<ConfManager>();
+        oldConfs.addAll(confs.values());
         synchronized (confs) {
-            for (ConfManager cm : confs.values()) cm.discard(false);
+            for (ConfManager cm : oldConfs) cm.discard(false);
         }
     }
 
@@ -68,7 +69,7 @@ public class ConfManager extends YamlConfiguration {
      */
     ConfManager(String filename) {
         super();
-        File dataFolder = RoyalSurvivors.instance.getDataFolder();
+        File dataFolder = RoyalSurvivors.dataFolder;
         path = dataFolder + File.separator + filename;
         pconfl = new File(path);
         try {
@@ -126,54 +127,6 @@ public class ConfManager extends YamlConfiguration {
             } catch (IllegalArgumentException ignored) {
             }
         }
-    }
-
-    /**
-     * Gets a Location from config
-     * <p/>
-     * This <strong>will</strong> throw an exception if the saved Location is invalid or missing parts.
-     *
-     * @param path Path in the yml to fetch from
-     * @return Location or null if path does not exist or if config doesn't exist
-     */
-    public Location getLocation(String path) {
-        if (!isSet(path)) return null;
-        String world = getString(path + ".w");
-        double x = getDouble(path + ".x");
-        double y = getDouble(path + ".y");
-        double z = getDouble(path + ".z");
-        float pitch = getFloat(path + ".pitch");
-        float yaw = getFloat(path + ".yaw");
-        return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
-    }
-
-    public Location getLocation(String path, String worldName) {
-        if (!isSet(path)) return null;
-        double x = getDouble(path + ".x");
-        double y = getDouble(path + ".y");
-        double z = getDouble(path + ".z");
-        float pitch = getFloat(path + ".pitch");
-        float yaw = getFloat(path + ".yaw");
-        return new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
-    }
-
-    /**
-     * Sets a location in config
-     *
-     * @param value Location to set
-     * @param path  Path in the yml to set
-     */
-    public void setLocation(String path, Location value) {
-        set(path + ".w", value.getWorld().getName());
-        set(path + ".x", value.getX());
-        set(path + ".y", value.getY());
-        set(path + ".z", value.getZ());
-        set(path + ".pitch", value.getPitch());
-        set(path + ".yaw", value.getYaw());
-    }
-
-    public Float getFloat(String path) {
-        return (float) getDouble(path);
     }
 
     /**

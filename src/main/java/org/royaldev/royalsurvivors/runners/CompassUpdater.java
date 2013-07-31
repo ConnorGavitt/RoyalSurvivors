@@ -5,7 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.royaldev.royalsurvivors.Config;
-import org.royaldev.royalsurvivors.PConfManager;
+import org.royaldev.royalsurvivors.configuration.PConfManager;
 import org.royaldev.royalsurvivors.RoyalSurvivors;
 
 public class CompassUpdater implements Runnable {

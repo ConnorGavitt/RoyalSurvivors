@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.royaldev.royalsurvivors.Config;
-import org.royaldev.royalsurvivors.PConfManager;
+import org.royaldev.royalsurvivors.configuration.PConfManager;
 import org.royaldev.royalsurvivors.RUtils;
 import org.royaldev.royalsurvivors.RoyalSurvivors;
 

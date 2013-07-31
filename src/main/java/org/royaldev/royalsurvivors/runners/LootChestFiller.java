@@ -9,7 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.royaldev.royalsurvivors.ConfManager;
+import org.royaldev.royalsurvivors.configuration.ConfManager;
 import org.royaldev.royalsurvivors.Config;
 import org.royaldev.royalsurvivors.LootChest;
 import org.royaldev.royalsurvivors.RoyalSurvivors;
